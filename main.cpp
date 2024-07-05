@@ -6,6 +6,7 @@ using std::vector;
 #include "Token.h"
 #include "Scanner.h"
 #include "Parser.h"
+#include "ParserObjects.h"
 
 int main(int argc, char* argv[]) {
     string filename = argv[1];
@@ -35,7 +36,9 @@ int main(int argc, char* argv[]) {
     };
 
     Parser p = Parser(tokens);
-    p.datalogParser();
+    Datalog newDatalog = p.datalogParser();
+
+    std::cout << newDatalog.toString() << std::endl;
 
     return 0;
 }

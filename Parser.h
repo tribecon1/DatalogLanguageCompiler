@@ -181,7 +181,7 @@ public:
         match(Token::Q_MARK);
     }
 
-    void datalogParser(){
+    Datalog datalogParser(){
         try{
             while(!tokens.empty()){
                 switch(tokenType()){
@@ -205,6 +205,7 @@ public:
             std::cout << "Failure!" << std::endl;
             std::cout << "  " + getCurrToken().toString() << std::endl;
         }
+        return currDatalog;
     }
 
 
