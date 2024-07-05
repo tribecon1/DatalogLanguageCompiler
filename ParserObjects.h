@@ -94,6 +94,9 @@ public:
     void addToQueries(const Predicate& new_query){
         queries.push_back(new_query);
     }
+    void addToDomain(const std::string& attempted_newstring){
+        domain.insert(attempted_newstring);
+    }
 
 };
 

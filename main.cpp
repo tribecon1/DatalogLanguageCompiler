@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 
     vector<Token> tokens = {
             Token(Token::ID,"Ned",2),
-            //Token(Token::LEFT_PAREN,"(",2),
+            Token(Token::LEFT_PAREN,"(",2),
             Token(Token::ID,"Ted",2),
             Token(Token::COMMA,",",2),
             Token(Token::ID,"Zed",2),
@@ -35,7 +35,6 @@ int main(int argc, char* argv[]) {
     };
 
     Parser p = Parser(tokens);
-    p.scheme();
 
     return 0;
 }

@@ -55,6 +55,7 @@ public:
         if (tokenType() == Token::COMMA) {
             match(Token::COMMA);
             toBeReturned.emplace_back(parameterCreator());
+            match(Token::ID);
             idList(toBeReturned);
         }
         //else == lambda
@@ -65,6 +66,7 @@ public:
         if (tokenType() == Token::COMMA) {
             match(Token::COMMA);
             toBeReturned.emplace_back(parameterCreator());
+            match(Token::STRING);
             stringList(toBeReturned);
         }
         //else == lambda
@@ -75,6 +77,12 @@ public:
         if (tokenType() == Token::COMMA){
             match(Token::COMMA);
             toBeReturned.push_back(parameterCreator());
+            if (tokenType() == Token::ID){
+                match(Token::ID);
+            }
+            else{
+                match(Token::STRING); //can only other be a string since parameterCreator() checks for that
+            }
             parameterList(toBeReturned);
         }
         //else == lambda
@@ -94,15 +102,16 @@ public:
 
 
     //object methods
-    Parameter parameterCreator(){
+    Parameter parameterCreator(){ //makes sure the only tokens it makes a parameter out of is EITHER id OR string
         if (tokenType() == Token::ID){
             Parameter new_param = Parameter(getCurrToken());
-            match(Token::ID);
+            //match(Token::ID);
             return new_param;
         }
         else if (tokenType() == Token::STRING){
             Parameter new_param = Parameter(getCurrToken());
-            match(Token::STRING);
+            currDatalog.addToDomain(getCurrToken().getValue());
+            //match(Token::STRING);
             return new_param;
         }
         else{
