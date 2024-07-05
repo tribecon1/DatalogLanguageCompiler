@@ -34,8 +34,9 @@ public:
     }
 
     static void throwError() {
-        std::cerr << "Error! Improper Syntax" << std::endl;
+        //std::cerr << "Error! Improper Syntax" << std::endl;
         //throw error here
+        throw std::runtime_error("Error! Improper Syntax");
     }
 
     void match(Token::TokenType input_token) {
@@ -176,8 +177,34 @@ public:
     }
 
     void query() {
-        currDatalog.addToSchemes(predicateCreator(Token::QUERIES));
+        currDatalog.addToQueries(predicateCreator(Token::QUERIES));
         match(Token::Q_MARK);
+    }
+
+    void datalogParser(){
+        try{
+            while(!tokens.empty()){
+                switch(tokenType()){
+                    case(Token::SCHEMES):
+                        scheme();
+                        break;
+                    case(Token::FACTS):
+                        fact();
+                        break;
+                    case(Token::QUERIES):
+                        query();
+                        break;
+                    case(Token::RULES):
+                        rule();
+                    default:
+                        throwError();
+                }
+            }
+        }
+        catch(const std::runtime_error& e){
+            std::cout << "Failure!" << std::endl;
+            std::cout << "  " + getCurrToken().toString() << std::endl;
+        }
     }
 
 

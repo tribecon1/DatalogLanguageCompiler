@@ -35,6 +35,7 @@ int main(int argc, char* argv[]) {
     };
 
     Parser p = Parser(tokens);
+    p.datalogParser();
 
     return 0;
 }

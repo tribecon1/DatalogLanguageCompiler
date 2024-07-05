@@ -6,6 +6,9 @@
 using std::vector;
 #include <set>
 using std::set;
+#include <string>
+#include <sstream>
+using std::stringstream;
 
 class Parameter {
 private:
@@ -21,6 +24,16 @@ public:
         else{
             return false;
         }
+    }
+
+    [[nodiscard]] std::string toString() const{
+        if (paramToken.getType() == Token::ID){
+            return paramToken.getValue();
+        }
+        else{
+            return "'" + paramToken.getValue() +"'";
+        }
+
     }
 };
 
@@ -44,6 +57,17 @@ public:
             parameters.push_back(currParameter);
         }
     }
+
+    [[nodiscard]] std::string toString() const{
+        stringstream ss;
+        ss << name << "(";
+        for (int index = 0; index < parameters.size()-2; index++){
+            ss << parameters.at(index).toString() << ",";
+        }
+        ss << parameters.at(parameters.size()-1).toString() << ")";
+        return ss.str();
+    }
+
 };
 
 
@@ -65,6 +89,16 @@ public:
         for (Predicate currPredicate : givenPredicates){
             bodyPredicates.push_back(currPredicate);
         }
+    }
+
+    [[nodiscard]] std::string toString(){
+        stringstream ss;
+        ss << headPredicate.toString() << " :- ";
+        for (int index = 0; index < bodyPredicates.size()-2; index++){
+            ss << bodyPredicates.at(index).toString() << ",";
+        }
+        ss << bodyPredicates.at(bodyPredicates.size()-1).toString() << ".";
+        return ss.str();
     }
 
 };
@@ -96,6 +130,48 @@ public:
     }
     void addToDomain(const std::string& attempted_newstring){
         domain.insert(attempted_newstring);
+    }
+
+    [[nodiscard]] const vector<Predicate> &getFacts() const {
+        return facts;
+    }
+    [[nodiscard]] const vector<Rule> &getRules() const {
+        return rules;
+    }
+    [[nodiscard]] const vector<Predicate> &getSchemes() const {
+        return schemes;
+    }
+    [[nodiscard]] const vector<Predicate> &getQueries() const {
+        return queries;
+    }
+    [[nodiscard]] const set<std::string> &getDomain() const {
+        return domain;
+    }
+
+    [[nodiscard]] std::string toString(){
+        stringstream ss;
+
+        ss << "Schemes(" << schemes.size() << "):\n";
+        for (Predicate currPredicate : schemes){
+            ss << "  " << currPredicate.toString() << "\n";
+        }
+        ss << "Facts(" << facts.size() << "):\n";
+        for (Predicate currPredicate : facts){
+            ss << "  " << currPredicate.toString() << ".\n";
+        }
+        ss << "Rules(" << rules.size() << "):\n";
+        for (Rule currRule : rules){
+            ss << "  " << currRule.toString() << ".\n";
+        }
+        ss << "Queries(" << queries.size() << "):\n";
+        for (Predicate currPredicate : queries){
+            ss << "  " << currPredicate.toString() << "?\n";
+        }
+        ss << "Domain(" << domain.size() << "):\n";
+        for (std::string currString : domain){
+            ss << "  '" << currString << "'\n";
+        }
+        return ss.str();
     }
 
 };
