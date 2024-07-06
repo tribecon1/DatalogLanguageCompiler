@@ -27,12 +27,6 @@ public:
     }
 
     [[nodiscard]] std::string toString() const{
-//        if (paramToken.getType() == Token::ID){
-//            return paramToken.getValue();
-//        }
-//        else{
-//            return "'" + paramToken.getValue() +"'";
-//        }
         return paramToken.getValue();
 
     }
@@ -62,7 +56,7 @@ public:
     [[nodiscard]] std::string toString() const{
         stringstream ss;
         ss << name << "(";
-        for (int index = 0; index < parameters.size()-2; index++){
+        for (int index = 0; index < parameters.size()-1; index++){
             ss << parameters.at(index).toString() << ",";
         }
         ss << parameters.at(parameters.size()-1).toString() << ")";
@@ -95,7 +89,7 @@ public:
     [[nodiscard]] std::string toString(){
         stringstream ss;
         ss << headPredicate.toString() << " :- ";
-        for (int index = 0; index < bodyPredicates.size()-2; index++){
+        for (int index = 0; index < bodyPredicates.size()-1; index++){
             ss << bodyPredicates.at(index).toString() << ",";
         }
         ss << bodyPredicates.at(bodyPredicates.size()-1).toString() << ".";
@@ -151,7 +145,7 @@ public:
 
     [[nodiscard]] std::string toString(){
         stringstream ss;
-
+        ss << "Success!\n";
         ss << "Schemes(" << schemes.size() << "):\n";
         for (Predicate currPredicate : schemes){
             ss << "  " << currPredicate.toString() << "\n";
@@ -162,7 +156,7 @@ public:
         }
         ss << "Rules(" << rules.size() << "):\n";
         for (Rule currRule : rules){
-            ss << "  " << currRule.toString() << ".\n";
+            ss << "  " << currRule.toString() << "\n";
         }
         ss << "Queries(" << queries.size() << "):\n";
         for (Predicate currPredicate : queries){

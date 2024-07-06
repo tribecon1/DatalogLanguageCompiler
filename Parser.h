@@ -210,7 +210,7 @@ public:
                     case(Token::QUERIES):
                         match(Token::QUERIES);
                         match(Token::COLON);
-                        while(tokenType() == Token::ID){
+                        while(tokenType() == Token::ID || tokenType() == Token::STRING){
                             query();
                         }
                         break;
@@ -220,6 +220,10 @@ public:
                         while(tokenType() == Token::ID){
                             rule(); //make recursive for each of these!
                         }
+                        break;
+                    case(Token::END):
+                        tokens.clear();
+                        break;
                     default:
                         throwError();
                 }
