@@ -40,7 +40,7 @@ public:
     }
 
     void match(Token::TokenType input_token) {
-        std::cout << "match: " << input_token << std::endl;
+        //std::cout << "match: " << input_token << std::endl;
         if (tokenType() == input_token){
             advanceToken();
         }
@@ -52,7 +52,7 @@ public:
     //ind. grammar rule functions
 
     //list methods, all have lambda because could go on for indefinite time
-    std::vector<Parameter> idList(std::vector<Parameter> toBeReturned) {
+    void idList(std::vector<Parameter>& toBeReturned) {
         if (tokenType() == Token::COMMA) {
             match(Token::COMMA);
             toBeReturned.emplace_back(parameterCreator());
@@ -60,10 +60,10 @@ public:
             idList(toBeReturned);
         }
         //else == lambda
-        return toBeReturned;
+        return;
     }
 
-    std::vector<Parameter> stringList(std::vector<Parameter> toBeReturned) {
+    std::vector<Parameter> stringList(std::vector<Parameter>& toBeReturned) {
         if (tokenType() == Token::COMMA) {
             match(Token::COMMA);
             toBeReturned.emplace_back(parameterCreator());
@@ -74,7 +74,7 @@ public:
         return toBeReturned;
     }
 
-    std::vector<Parameter> parameterList(std::vector<Parameter> toBeReturned){
+    std::vector<Parameter> parameterList(std::vector<Parameter>& toBeReturned){
         if (tokenType() == Token::COMMA){
             match(Token::COMMA);
             toBeReturned.push_back(parameterCreator());
@@ -90,7 +90,7 @@ public:
         return toBeReturned;
     }
 
-    std::vector<Predicate> predicateList(std::vector<Predicate> toBeReturned){ //this method ONLY applies to a Rule obj.
+    std::vector<Predicate> predicateList(std::vector<Predicate>& toBeReturned){ //this method ONLY applies to a Rule obj.
         if (tokenType() == Token::COMMA){
             match(Token::COMMA);
             toBeReturned.emplace_back(predicateCreator(Token::RULES));
@@ -130,16 +130,26 @@ public:
             if (tokenType() == Token::ID && factschemequeryruleSwitch == Token::SCHEMES){
                 std::vector<Parameter> idParameterList;
                 new_predicate.addParameter(parameterCreator());
-                new_predicate.addParameter(idList(idParameterList));
+                match(Token::ID);
+                idList(idParameterList);
+                new_predicate.addParameter(idParameterList);
             }
             else if (tokenType() == Token::STRING && factschemequeryruleSwitch == Token::FACTS){
                 std::vector<Parameter> stringParameterList;
                 new_predicate.addParameter(parameterCreator());
+                match(Token::STRING);
                 new_predicate.addParameter(stringList(stringParameterList));
             }
             else if (factschemequeryruleSwitch == Token::QUERIES || factschemequeryruleSwitch == Token::RULES){ //can be a mix of ID and String tokens
                 std::vector<Parameter> mixedParameterList;
-                new_predicate.addParameter(parameterCreator());
+                Parameter firstParameter = parameterCreator();
+                new_predicate.addParameter(firstParameter);
+                if(firstParameter.isTypeID()){
+                    match(Token::ID);
+                }
+                else{
+                    match(Token::STRING);
+                }
                 new_predicate.addParameter(parameterList(mixedParameterList));
             }
             else{
@@ -152,8 +162,6 @@ public:
             throwError();
         }
     }
-
-
 
 
     void scheme() {
@@ -186,20 +194,37 @@ public:
             while(!tokens.empty()){
                 switch(tokenType()){
                     case(Token::SCHEMES):
-                        scheme();
+                        match(Token::SCHEMES);
+                        match(Token::COLON);
+                        while(tokenType() == Token::ID){
+                            scheme();
+                        }
                         break;
                     case(Token::FACTS):
-                        fact();
+                        match(Token::FACTS);
+                        match(Token::COLON);
+                        while(tokenType() == Token::ID){
+                            fact();
+                        }
                         break;
                     case(Token::QUERIES):
-                        query();
+                        match(Token::QUERIES);
+                        match(Token::COLON);
+                        while(tokenType() == Token::ID){
+                            query();
+                        }
                         break;
                     case(Token::RULES):
-                        rule();
+                        match(Token::RULES);
+                        match(Token::COLON);
+                        while(tokenType() == Token::ID){
+                            rule(); //make recursive for each of these!
+                        }
                     default:
                         throwError();
                 }
             }
+            std::cout << currDatalog.toString() << std::endl;
         }
         catch(const std::runtime_error& e){
             std::cout << "Failure!" << std::endl;

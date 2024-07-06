@@ -18,27 +18,23 @@ int main(int argc, char* argv[]) {
     in_reader.close();
 
 
-    /*Scanner s = Scanner(input);
+    Scanner s = Scanner(input);
     std::vector<Token> tokens = s.scanToken();
 
-    for (const Token& currToken : tokens){
-        std::cout << currToken.toString() << std::endl;
-    }
-    std::cout << "Total Tokens = " << tokens.size() << std::endl;*/
+//    for (const Token& currToken : tokens){
+//        std::cout << currToken.toString() << std::endl;
+//    }
+//    std::cout << "Total Tokens = " << tokens.size() << std::endl;
 
-    vector<Token> tokens = {
-            Token(Token::ID,"Ned",2),
-            Token(Token::LEFT_PAREN,"(",2),
-            Token(Token::ID,"Ted",2),
-            Token(Token::COMMA,",",2),
-            Token(Token::ID,"Zed",2),
-            Token(Token::RIGHT_PAREN,")",2),
-    };
+//    for (Token t : tokens){
+//        std::cout << t.toString() << ", ";
+//    }
+//    std::cout << std::endl;
 
     Parser p = Parser(tokens);
     Datalog newDatalog = p.datalogParser();
 
-    std::cout << newDatalog.toString() << std::endl;
+    //std::cout << newDatalog.toString() << std::endl;
 
     return 0;
 }

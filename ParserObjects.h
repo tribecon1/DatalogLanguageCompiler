@@ -27,12 +27,13 @@ public:
     }
 
     [[nodiscard]] std::string toString() const{
-        if (paramToken.getType() == Token::ID){
-            return paramToken.getValue();
-        }
-        else{
-            return "'" + paramToken.getValue() +"'";
-        }
+//        if (paramToken.getType() == Token::ID){
+//            return paramToken.getValue();
+//        }
+//        else{
+//            return "'" + paramToken.getValue() +"'";
+//        }
+        return paramToken.getValue();
 
     }
 };
@@ -169,7 +170,7 @@ public:
         }
         ss << "Domain(" << domain.size() << "):\n";
         for (std::string currString : domain){
-            ss << "  '" << currString << "'\n";
+            ss << "  " << currString << "\n";
         }
         return ss.str();
     }
