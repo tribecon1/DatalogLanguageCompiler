@@ -17,6 +17,7 @@ int main(int argc, char* argv[]) {
     string input = ss.str();
     in_reader.close();
 
+
     //std::cout << input << std::endl;
     Scanner s = Scanner(input);
     std::vector<Token> tokens = s.scanToken();
