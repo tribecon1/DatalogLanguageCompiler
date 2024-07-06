@@ -166,7 +166,9 @@ public:
         for (std::string currString : domain){
             ss << "  " << currString << "\n";
         }
-        return ss.str();
+        std::string datalogStringForm = ss.str();
+        datalogStringForm.pop_back();
+        return datalogStringForm;
     }
 
 };

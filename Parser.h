@@ -51,9 +51,35 @@ public:
 
     //ind. grammar rule functions
 
-    //list methods, all have lambda because could go on for indefinite time
+    //recursive list methods, all have lambda because could go on for indefinite time
 
+    void schemeList(){
+        if (tokenType() == Token::ID){
+            currDatalog.addToSchemes(scheme());
+            schemeList();
+        }
+    }
 
+    void factList(){
+        if (tokenType() == Token::ID){
+            currDatalog.addToFacts(fact());
+            factList();
+        }
+    }
+
+    void queryList(){
+        if (tokenType() == Token::ID){
+            currDatalog.addToQueries(query());
+            queryList();
+        }
+    }
+
+    void ruleList(){
+        if (tokenType() == Token::ID){
+            currDatalog.addToRules(rule());
+            ruleList();
+        }
+    }
 
 
     void idList(std::vector<Parameter>& toBeReturned) {
@@ -64,10 +90,9 @@ public:
             idList(toBeReturned);
         }
         //else == lambda
-        return;
     }
 
-    std::vector<Parameter> stringList(std::vector<Parameter>& toBeReturned) {
+    void stringList(std::vector<Parameter>& toBeReturned) {
         if (tokenType() == Token::COMMA) {
             match(Token::COMMA);
             toBeReturned.emplace_back(parameterCreator());
@@ -75,10 +100,9 @@ public:
             stringList(toBeReturned);
         }
         //else == lambda
-        return toBeReturned;
     }
 
-    std::vector<Parameter> parameterList(std::vector<Parameter>& toBeReturned){
+    void parameterList(std::vector<Parameter>& toBeReturned){
         if (tokenType() == Token::COMMA){
             match(Token::COMMA);
             toBeReturned.push_back(parameterCreator());
@@ -91,18 +115,15 @@ public:
             parameterList(toBeReturned);
         }
         //else == lambda
-        return toBeReturned;
     }
 
-    std::vector<Predicate> predicateList(std::vector<Predicate>& toBeReturned){ //this method ONLY applies to a Rule obj.
+    void predicateList(std::vector<Predicate>& toBeReturned){ //this method ONLY applies to a Rule obj.
         if (tokenType() == Token::COMMA){
             match(Token::COMMA);
             toBeReturned.emplace_back(predicateCreator(Token::RULES));
             predicateList(toBeReturned);
         }
         //else == lambda
-        return toBeReturned;
-
     }
 
 
@@ -110,13 +131,11 @@ public:
     Parameter parameterCreator(){ //makes sure the only tokens it makes a parameter out of is EITHER id OR string
         if (tokenType() == Token::ID){
             Parameter new_param = Parameter(getCurrToken());
-            //match(Token::ID);
             return new_param;
         }
         else if (tokenType() == Token::STRING){
             Parameter new_param = Parameter(getCurrToken());
             currDatalog.addToDomain(getCurrToken().getValue());
-            //match(Token::STRING);
             return new_param;
         }
         else{
@@ -142,7 +161,8 @@ public:
                 std::vector<Parameter> stringParameterList;
                 new_predicate.addParameter(parameterCreator());
                 match(Token::STRING);
-                new_predicate.addParameter(stringList(stringParameterList));
+                stringList(stringParameterList);
+                new_predicate.addParameter(stringParameterList);
             }
             else if (factschemequeryruleSwitch == Token::QUERIES || factschemequeryruleSwitch == Token::RULES){ //can be a mix of ID and String tokens
                 std::vector<Parameter> mixedParameterList;
@@ -154,7 +174,8 @@ public:
                 else{
                     match(Token::STRING);
                 }
-                new_predicate.addParameter(parameterList(mixedParameterList));
+                parameterList(mixedParameterList);
+                new_predicate.addParameter(mixedParameterList);
             }
             else{
                 throwError();
@@ -168,29 +189,32 @@ public:
     }
 
 
-    void scheme() {
-        currDatalog.addToSchemes(predicateCreator(Token::SCHEMES));
+    Predicate scheme() {
+        return predicateCreator(Token::SCHEMES);
     }
 
-    void fact() {
-        currDatalog.addToFacts(predicateCreator(Token::FACTS));
+    Predicate fact() {
+        Predicate new_fact = predicateCreator(Token::FACTS);
         match(Token::PERIOD);
+        return new_fact;
     }
 
-    void rule(){
+    Rule rule(){
         Predicate ruleHead = predicateCreator(Token::SCHEMES);
         std::vector<Predicate> ruleBody;
         Rule newRule = Rule(ruleHead);
         match(Token::COLON_DASH);
         newRule.addPredicates(predicateCreator(Token::RULES));
-        newRule.addPredicates(predicateList(ruleBody));
-        currDatalog.addToRules(newRule);
+        predicateList(ruleBody);
+        newRule.addPredicates(ruleBody);
         match(Token::PERIOD);
+        return newRule;
     }
 
-    void query() {
-        currDatalog.addToQueries(predicateCreator(Token::QUERIES));
+    Predicate query() {
+        Predicate new_query = predicateCreator(Token::QUERIES);
         match(Token::Q_MARK);
+        return new_query;
     }
 
     Datalog datalogParser(){
@@ -200,30 +224,22 @@ public:
                     case(Token::SCHEMES):
                         match(Token::SCHEMES);
                         match(Token::COLON);
-                        while(tokenType() == Token::ID){  //MAKE RECURSIVE, then done?
-                            scheme();
-                        }
+                        schemeList();
                         break;
                     case(Token::FACTS):
                         match(Token::FACTS);
                         match(Token::COLON);
-                        while(tokenType() == Token::ID){
-                            fact();
-                        }
+                        factList();
                         break;
                     case(Token::QUERIES):
                         match(Token::QUERIES);
                         match(Token::COLON);
-                        while(tokenType() == Token::ID || tokenType() == Token::STRING){
-                            query();
-                        }
+                        queryList();
                         break;
                     case(Token::RULES):
                         match(Token::RULES);
                         match(Token::COLON);
-                        while(tokenType() == Token::ID){
-                            rule(); //make recursive for each of these!
-                        }
+                        ruleList();
                         break;
                     case(Token::END):
                         tokens.clear();
