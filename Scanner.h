@@ -80,7 +80,7 @@ public:
     }
 
     void commentHandler(){
-        int comment_start = line;
+        //int comment_start = line;
         stringstream building_comment;
         building_comment << input.at(0);
         input = input.erase(0, 1); //to get #
@@ -95,7 +95,7 @@ public:
             }
         }
         input = input.erase(0, building_comment.str().size()-1);
-        TotalTokens.emplace_back(Token::COMMENT, building_comment.str(), comment_start);
+        //TotalTokens.emplace_back(Token::COMMENT, building_comment.str(), comment_start);
     }
 
 
@@ -117,8 +117,7 @@ public:
                 stringHandler();
             }
             else if (input.at(0) == '#'){
-                //commentHandler();
-                break;
+                commentHandler();
             }
             else{
                 switch(input.at(0)){

@@ -34,13 +34,10 @@ public:
     }
 
     static void throwError() {
-        //std::cerr << "Error! Improper Syntax" << std::endl;
-        //throw error here
         throw std::runtime_error("Error! Improper Syntax");
     }
 
     void match(Token::TokenType input_token) {
-        //std::cout << "match: " << input_token << std::endl;
         if (tokenType() == input_token){
             advanceToken();
         }
@@ -52,7 +49,6 @@ public:
     //ind. grammar rule functions
 
     //recursive list methods, all have lambda because could go on for indefinite time
-
     void schemeList(){
         if (tokenType() == Token::ID){
             currDatalog.addToSchemes(scheme());
@@ -135,7 +131,6 @@ public:
         }
         else if (tokenType() == Token::STRING){
             Parameter new_param = Parameter(getCurrToken());
-            currDatalog.addToDomain(getCurrToken().getValue());
             return new_param;
         }
         else{
@@ -219,33 +214,31 @@ public:
 
     Datalog datalogParser(){
         try{
-            while(!tokens.empty()){
-                switch(tokenType()){
-                    case(Token::SCHEMES):
-                        match(Token::SCHEMES);
-                        match(Token::COLON);
-                        schemeList();
-                        break;
-                    case(Token::FACTS):
-                        match(Token::FACTS);
-                        match(Token::COLON);
-                        factList();
-                        break;
-                    case(Token::QUERIES):
-                        match(Token::QUERIES);
-                        match(Token::COLON);
-                        queryList();
-                        break;
-                    case(Token::RULES):
-                        match(Token::RULES);
-                        match(Token::COLON);
-                        ruleList();
-                        break;
-                    case(Token::END):
-                        tokens.clear();
-                        break;
-                    default:
-                        throwError();
+            while(tokenType() != Token::END){
+                match(Token::SCHEMES);
+                match(Token::COLON);
+                schemeList();
+                if (currDatalog.getSchemes().empty()){
+                    throwError();
+                }
+                match(Token::FACTS);
+                match(Token::COLON);
+                factList();
+                match(Token::RULES);
+                match(Token::COLON);
+                ruleList();
+                match(Token::QUERIES);
+                match(Token::COLON);
+                queryList();
+            }
+            if (currDatalog.getQueries().empty()){
+                throwError();
+            }
+            if (!currDatalog.getFacts().empty()){
+                for (Predicate currFact : currDatalog.getFacts()){
+                    for (const Parameter& currParameter : currFact.getParameters()){
+                        currDatalog.addToDomain(currParameter.toString());
+                    }
                 }
             }
             std::cout << currDatalog.toString() << std::endl;

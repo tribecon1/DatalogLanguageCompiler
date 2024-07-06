@@ -73,6 +73,10 @@ public:
         return this->value;
     }
 
+    [[nodiscard]] int getLine() const{
+        return this->lineNum;
+    }
+
     [[nodiscard]] string toString() const{
         stringstream out_string;
         out_string << "(" << typeName(type) << "," << "\"" << value << "\"" << "," << lineNum << ")";

@@ -28,7 +28,6 @@ public:
 
     [[nodiscard]] std::string toString() const{
         return paramToken.getValue();
-
     }
 };
 
@@ -51,6 +50,10 @@ public:
         for (Parameter currParameter : givenParameters){
             parameters.push_back(currParameter);
         }
+    }
+
+    std::vector<Parameter> getParameters(){
+        return parameters;
     }
 
     [[nodiscard]] std::string toString() const{

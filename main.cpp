@@ -17,14 +17,9 @@ int main(int argc, char* argv[]) {
     string input = ss.str();
     in_reader.close();
 
-
+    //std::cout << input << std::endl;
     Scanner s = Scanner(input);
     std::vector<Token> tokens = s.scanToken();
-
-//    for (const Token& currToken : tokens){
-//        std::cout << currToken.toString() << std::endl;
-//    }
-//    std::cout << "Total Tokens = " << tokens.size() << std::endl;
 
 //    for (Token t : tokens){
 //        std::cout << t.toString() << ", ";
@@ -33,8 +28,6 @@ int main(int argc, char* argv[]) {
 
     Parser p = Parser(tokens);
     Datalog newDatalog = p.datalogParser();
-
-    //std::cout << newDatalog.toString() << std::endl;
 
     return 0;
 }
