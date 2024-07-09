@@ -39,7 +39,6 @@ int main(int argc, char* argv[]) {
 
     Relation relation("student", scheme);
 
-
     vector<string> values[] = {
             {"'42'", "'Ann'", "'CS'"},
             {"'32'", "'Bob'", "'CS'"},
@@ -52,9 +51,14 @@ int main(int argc, char* argv[]) {
         std::cout << tuple.toString(scheme) << std::endl;
         relation.addTuple(tuple);
     }
+
     std::cout << "relation:" << std::endl;
     std::cout << relation.toString();
 
+    Relation result = relation.select(2, "'CS'");
+
+    std::cout << "select Major='CS' result:" << std::endl;
+    std::cout << result.toString();
 
 
     return 0;

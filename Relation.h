@@ -28,8 +28,11 @@ public:
 
     Relation select(int index, const string& value) const{
         Relation result(name, column_headers);
-        // continue!
-
+        for (const Tuple& tuple : tuples){
+            if (tuple.at(index) == value){
+                result.addTuple(tuple);
+            }
+        }
 
         return result;
     }
