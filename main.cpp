@@ -7,6 +7,9 @@ using std::vector;
 #include "Scanner.h"
 #include "Parser.h"
 #include "ParserObjects.h"
+#include "Scheme.h"
+#include "Tuple.h"
+#include "Relation.h"
 
 int main(int argc, char* argv[]) {
     string filename = argv[1];
@@ -28,7 +31,31 @@ int main(int argc, char* argv[]) {
 //    std::cout << std::endl;
 
     Parser p = Parser(tokens);
-    Datalog newDatalog = p.datalogParser();
+    //Datalog newDatalog = p.datalogParser();
+
+    vector<string> names = { "ID", "Name", "Major" };
+
+    Scheme scheme(names);
+
+    Relation relation("student", scheme);
+
+
+    vector<string> values[] = {
+            {"'42'", "'Ann'", "'CS'"},
+            {"'32'", "'Bob'", "'CS'"},
+            {"'64'", "'Ned'", "'EE'"},
+            {"'16'", "'Jim'", "'EE'"},
+    };
+
+    for (auto& value : values) {
+        Tuple tuple(value);
+        std::cout << tuple.toString(scheme) << std::endl;
+        relation.addTuple(tuple);
+    }
+    std::cout << "relation:" << std::endl;
+    std::cout << relation.toString();
+
+
 
     return 0;
 }
