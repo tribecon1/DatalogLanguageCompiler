@@ -10,6 +10,7 @@ using std::vector;
 #include "Scheme.h"
 #include "Tuple.h"
 #include "Relation.h"
+#include "Interpreter.h"
 
 int main(int argc, char* argv[]) {
     string filename = argv[1];
@@ -31,14 +32,11 @@ int main(int argc, char* argv[]) {
 //    std::cout << std::endl;
 
     Parser p = Parser(tokens);
-    //Datalog newDatalog = p.datalogParser();
+    Datalog newDatalog = p.datalogParser();
 
-    vector<string> names = { "ID", "Name", "Major" };
-
+    /*vector<string> names = { "ID", "Name", "Major" };
     Scheme scheme(names);
-
     Relation relation("student", scheme);
-
     vector<string> values[] = {
             {"'42'", "'Ann'", "'CS'"},
             {"'32'", "'Bob'", "'CS'"},
@@ -58,8 +56,16 @@ int main(int argc, char* argv[]) {
     Relation result = relation.select(2, "'CS'");
 
     std::cout << "select Major='CS' result:" << std::endl;
-    std::cout << result.toString();
+    std::cout << result.toString();*/
+
+    Database newDatabase;
+    Interpreter interpret = Interpreter(newDatalog, newDatabase);
 
 
+//interpreter takes in the Datalog object and a blank Database obj., creates relations, and stores them in the
+//database object and returns it, full of relations
+
+//if string, call select 1 (pos, value)
+//if id, call select 2 (pos, pos)
     return 0;
 }

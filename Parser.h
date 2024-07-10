@@ -241,7 +241,7 @@ public:
                     }
                 }
             }
-            std::cout << currDatalog.toString() << std::endl;
+            //std::cout << currDatalog.toString() << std::endl;
         }
         catch(const std::runtime_error& e){
             std::cout << "Failure!" << std::endl;

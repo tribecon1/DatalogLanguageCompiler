@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <string>
 using std::string;
@@ -22,11 +24,20 @@ public:
 
     Relation(const string& name, const Scheme& scheme) : name(name), column_headers(scheme) { }
 
-    void addTuple(const Tuple& tuple) {
-        tuples.insert(tuple);
+    [[nodiscard]] string getName(){
+        return name;
     }
 
-    Relation select(int index, const string& value) const{
+    void addTuple(const Tuple& tuple) {
+        if (tuple.size() == column_headers.size()){
+            tuples.insert(tuple);
+        }
+        else{
+            throw std::out_of_range("Error! Tuple length must be length: " + std::to_string(column_headers.size()) + " to match the Scheme length");
+        }
+    }
+
+    [[nodiscard]] Relation select(int index, const string& value) const{
         Relation result(name, column_headers); //same specified value, same column
         for (const Tuple& tuple : tuples){
             if (tuple.at(index) == value){
