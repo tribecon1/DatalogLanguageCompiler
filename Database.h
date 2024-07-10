@@ -23,5 +23,8 @@ public:
         relations_database.insert({givenRelation.getName() ,givenRelation});
     }
 
+    unsigned relationCount(){
+        return relations_database.size();
+    }
 
 };

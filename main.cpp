@@ -62,6 +62,7 @@ int main(int argc, char* argv[]) {
     Interpreter interpreter = Interpreter(newDatalog, newDatabase);
 
     Database modifiedDatabase = interpreter.interpret();
+    std::cout << modifiedDatabase.relationCount() << std::endl;
 
 
 //interpreter takes in the Datalog object and a blank Database obj., creates relations, and stores them in the
