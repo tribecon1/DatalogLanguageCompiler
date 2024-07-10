@@ -18,13 +18,13 @@ private:
 
 public:
 
-    Tuple(vector<string> values) : values(values) { }
+    explicit Tuple(vector<string> values) : values(values) { }
 
-    unsigned size() const {
+    [[nodiscard]] unsigned size() const {
         return values.size();
     }
 
-    const string& at(int index) const {
+    [[nodiscard]] const string& at(int index) const {
         return values.at(index);
     }
 

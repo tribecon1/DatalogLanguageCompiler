@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <string>
 #include <utility>
@@ -17,4 +19,10 @@ private:
 
 public:
     Interpreter(Datalog givenDatalog, Database emptyDatabase) : givenDatalog(std::move(givenDatalog)), newDatabase(std::move(emptyDatabase)) {}
+
+
+    //modifying methods below a method called 'fillDatabase,' which returns the mutated 'newDatabase'
+
+
+
 };
