@@ -23,6 +23,22 @@ public:
 
     //modifying methods below a method called 'fillDatabase,' which returns the mutated 'newDatabase'
 
+    [[nodiscard]] Database interpret(){
+
+        schemeEval();
+
+
+        return newDatabase;
+    }
+
+
+    void schemeEval(){
+        for (Predicate pre_scheme : givenDatalog.getSchemes()){
+            Scheme scheme = Scheme(pre_scheme.convertParameters());
+            newDatabase.addToDatabase(Relation(pre_scheme.getName(), scheme));
+        }
+
+    }
 
 
 };

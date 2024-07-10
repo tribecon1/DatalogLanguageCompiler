@@ -56,6 +56,19 @@ public:
         return parameters;
     }
 
+    [[nodiscard]] vector<string> convertParameters(){
+        vector<string> scheme_headers;
+        scheme_headers.reserve(parameters.size());
+        for (const Parameter& param : parameters){
+            scheme_headers.push_back(param.toString());
+        }
+        return scheme_headers;
+    }
+
+    [[nodiscard]] string getName(){
+        return name;
+    }
+
     [[nodiscard]] std::string toString() const{
         stringstream ss;
         ss << name << "(";

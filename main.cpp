@@ -59,7 +59,9 @@ int main(int argc, char* argv[]) {
     std::cout << result.toString();*/
 
     Database newDatabase;
-    Interpreter interpret = Interpreter(newDatalog, newDatabase);
+    Interpreter interpreter = Interpreter(newDatalog, newDatabase);
+
+    Database modifiedDatabase = interpreter.interpret();
 
 
 //interpreter takes in the Datalog object and a blank Database obj., creates relations, and stores them in the
