@@ -47,7 +47,7 @@ public:
     }
 
     void addParameter(const std::vector<Parameter>& givenParameters){
-        for (Parameter currParameter : givenParameters){
+        for (const Parameter& currParameter : givenParameters){
             parameters.push_back(currParameter);
         }
     }
@@ -56,13 +56,13 @@ public:
         return parameters;
     }
 
-    [[nodiscard]] vector<string> convertParameters(){
-        vector<string> scheme_headers;
-        scheme_headers.reserve(parameters.size());
+    [[nodiscard]] vector<string> convertParametersToStrings(){
+        vector<string> string_parameters;
+        string_parameters.reserve(parameters.size());
         for (const Parameter& param : parameters){
-            scheme_headers.push_back(param.toString());
+            string_parameters.push_back(param.toString());
         }
-        return scheme_headers;
+        return string_parameters;
     }
 
     [[nodiscard]] string getName(){

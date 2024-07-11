@@ -16,7 +16,7 @@ private:
 
 
 public:
-    Parser(std::vector<Token>& scanner_tokens) : tokens(scanner_tokens) {}
+    explicit Parser(std::vector<Token>& scanner_tokens) : tokens(scanner_tokens) {}
 
     //helper functions
     [[nodiscard]] Token::TokenType tokenType() const {
@@ -124,7 +124,7 @@ public:
 
 
     //object methods
-    Parameter parameterCreator(){ //makes sure the only tokens it makes a parameter out of is EITHER id OR string
+    [[nodiscard]] Parameter parameterCreator() const{ //makes sure the only tokens it makes a parameter out of is EITHER id OR string
         if (tokenType() == Token::ID){
             Parameter new_param = Parameter(getCurrToken());
             return new_param;

@@ -26,18 +26,32 @@ public:
     [[nodiscard]] Database interpret(){
 
         schemeEval();
-
-
+        factEval();
+        newDatabase.toString();
         return newDatabase;
     }
 
 
     void schemeEval(){
         for (Predicate pre_scheme : givenDatalog.getSchemes()){
-            Scheme scheme = Scheme(pre_scheme.convertParameters());
+            Scheme scheme = Scheme(pre_scheme.convertParametersToStrings());
             newDatabase.addToDatabase(Relation(pre_scheme.getName(), scheme));
         }
+    }
 
+    void factEval(){
+        for (Predicate fact : givenDatalog.getFacts()){
+            Relation& foundRelation = newDatabase.locateRelation(fact.getName());
+            foundRelation.addTuple(Tuple(fact.convertParametersToStrings()));
+        }
+    }
+
+    void queryEval(){
+        for (Predicate query : givenDatalog.getQueries()){
+            Relation& foundRelation = newDatabase.locateRelation(query.getName());
+
+
+        }
     }
 
 

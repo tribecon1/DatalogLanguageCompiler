@@ -5,6 +5,7 @@
 using std::string;
 #include <sstream>
 using std::stringstream;
+#include <utility>
 #include <vector>
 using std::vector;
 #include <set>
@@ -27,6 +28,8 @@ public:
     [[nodiscard]] string getName(){
         return name;
     }
+
+
 
     void addTuple(const Tuple& tuple) {
         if (tuple.size() == column_headers.size()){
@@ -55,6 +58,31 @@ public:
             }
         }
         return result;
+    }
+
+    Relation rename(const Scheme& new_scheme){
+        Relation renamedRelation = Relation(this->name, new_scheme);
+        return renamedRelation;
+    }
+
+    Relation project(const std::vector<int>& chosen_columns_ind){
+        vector<string> modScheme;
+        modScheme.reserve(chosen_columns_ind.size());
+        for (int col_index : chosen_columns_ind){
+            modScheme.push_back(this->column_headers.at(col_index));
+        }
+        Relation projectedRelation = Relation(this->name, Scheme(modScheme));
+
+        for (Tuple tuple : tuples){
+            vector<string> modTupleValues;
+            modTupleValues.reserve(chosen_columns_ind.size());
+            for (int tuple_index : chosen_columns_ind){
+                modTupleValues.push_back(tuple.getValues().at(tuple_index));
+            }
+            projectedRelation.addTuple(Tuple(modTupleValues));
+        }
+
+        return projectedRelation;
     }
 
 

@@ -28,6 +28,10 @@ public:
         return values.at(index);
     }
 
+    [[nodiscard]] const vector<string>& getValues(){
+        return values;
+    }
+
     bool operator<(const Tuple& t) const {
         return values < t.values;
     }

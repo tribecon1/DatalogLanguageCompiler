@@ -23,8 +23,19 @@ public:
         relations_database.insert({givenRelation.getName() ,givenRelation});
     }
 
-    unsigned relationCount(){
+    Relation& locateRelation(const string& relation_name){
+        return relations_database.at(relation_name);
+    }
+
+    unsigned getRelationCount(){
         return relations_database.size();
+    }
+
+    void toString(){
+        for (const auto& pair : relations_database){
+            std::cout << "SCHEME \'" << pair.first << "\': " << std::endl;
+            std::cout << pair.second.toString() << std::endl;
+        }
     }
 
 };
