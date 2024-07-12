@@ -70,9 +70,7 @@ public:
             unordered_map<string, vector<int>> variableAndIndexes;
             vector<string> renamed_columns;
 
-            Relation postSelectRelation = newDatabase.locateRelation(query.getName());
-
-
+            Relation modifiedRelation = newDatabase.locateRelation(query.getName());
 
             for (int paramIndex = 0; paramIndex < query.getParameters().size(); paramIndex++){
                 if(query.getParameters().at(paramIndex).isTypeID()){
@@ -86,14 +84,14 @@ public:
                         //maybe do select after this, based on how many variables I found?
 
                         for (const auto& pair : variableAndIndexes) {
-                            postSelectRelation = postSelectRelation.select(pair.second);
+                            modifiedRelation = modifiedRelation.select(pair.second);
                         }
                     }
 
                 }
                 else{
                     string constant = query.getParameters().at(paramIndex).toString();
-                    postSelectRelation = postSelectRelation.select(paramIndex, constant);
+                    modifiedRelation = modifiedRelation.select(paramIndex, constant);
                 }
             }
 
@@ -107,17 +105,17 @@ public:
                         relevantColumns.insert(index);
                     }
                 }
-                postSelectRelation = postSelectRelation.project(relevantColumns);
+                modifiedRelation = modifiedRelation.project(relevantColumns);
             }
             else if (variableAndIndexes.size() == 1){
                 for (const auto& pair : variableAndIndexes){
                     relevantColumns.insert(pair.second.front());
                 }
-                postSelectRelation = postSelectRelation.project(relevantColumns);
+                modifiedRelation = modifiedRelation.project(relevantColumns);
             }
             else{
             }
-            postSelectRelation = postSelectRelation.rename(Scheme(renamed_columns));
+            modifiedRelation = modifiedRelation.rename(Scheme(renamed_columns));
 
 
 
@@ -125,15 +123,15 @@ public:
             //printing
             string header;
             header = query.toString() + "? ";
-            if (postSelectRelation.getTupleCount() == 0){
+            if (modifiedRelation.getTupleCount() == 0){
                 header += "No";
             }
             else{
-                header += "Yes(" + std::to_string(postSelectRelation.getTupleCount()) + ")";
+                header += "Yes(" + std::to_string(modifiedRelation.getTupleCount()) + ")";
             }
             std::cout << header << std::endl;
             if (!variableAndIndexes.empty()){
-                std::cout << postSelectRelation.toString();
+                std::cout << modifiedRelation.toString();
             }
 
 
