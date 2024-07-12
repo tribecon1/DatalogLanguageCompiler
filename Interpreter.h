@@ -83,9 +83,9 @@ public:
 
                         //maybe do select after this, based on how many variables I found?
 
-                        for (const auto& pair : variableAndIndexes) {
-                            modifiedRelation = modifiedRelation.select(pair.second);
-                        }
+//                        for (const auto& pair : variableAndIndexes) {
+//                            modifiedRelation = modifiedRelation.select(pair.second);
+//                        }
                     }
 
                 }
@@ -95,15 +95,19 @@ public:
                 }
             }
 
-
+            for (const auto& pair : variableAndIndexes) {
+                modifiedRelation = modifiedRelation.select(pair.second);
+            }
+            //test
+            //modifiedRelation = modifiedRelation.select(variableAndIndexes);
 
 
             std::set<int> relevantColumns; //use set to keep proper order of variables as they appear
             if (variableAndIndexes.size() > 1){
                 //testing
-                std::cout << "------------" << std::endl;
-                std::cout << modifiedRelation.toString();
-                std::cout << "------------" << std::endl;
+//                std::cout << "------------" << std::endl;
+//                std::cout << modifiedRelation.toString();
+//                std::cout << "------------" << std::endl;
 
                 for (const auto& pair : variableAndIndexes){
                     for (int index : pair.second){

@@ -60,7 +60,7 @@ public:
         for (const Tuple& tuple : tuples){
             bool toBeAdded = true;
             for (int index : varIndexes){
-                if (tuple.at(index) != tuple.at(0)){
+                if (tuple.at(index) != tuple.at(varIndexes.at(0))){
                     toBeAdded = false;
                 }
             }
@@ -71,17 +71,35 @@ public:
         return result;
     }
 
+//    [[nodiscard]] Relation select(const std::unordered_map<string, vector<int>>& varWithIndexes) const{ //same unspecified value, diff. columns
+//        Relation result(name, column_headers);
+//        if (varWithIndexes.size() == 1){
+//            for (const Tuple& tuple : tuples){
+//                bool toBeAdded = true;
+//                for (const auto& pair : varWithIndexes){
+//                    for (int index : pair.second){
+//                        if (tuple.at(index) != tuple.at(0)){
+//                            toBeAdded = false;
+//                        }
+//                    }
+//                }
+//                if (toBeAdded){
+//                    result.addTuple(tuple);
+//                }
+//            }
+//            return result;
+//        }
+//
+//
+//
+//        return result;
+//    }
+
     Relation rename(const Scheme& new_scheme){
         Relation renamedRelation = *this;
         renamedRelation.column_headers = new_scheme;
         return renamedRelation;
     }
-//    Relation rename(const std::unordered_map<string, vector<string>>& variableSpots, Relation almostFinishedScheme){
-//
-//
-//        Relation renamedRelation = Relation(name, new_scheme);
-//        return renamedRelation;
-//    }
 
 //    Relation project(const std::vector<int>& chosen_columns_ind){
 //        vector<string> modScheme;
