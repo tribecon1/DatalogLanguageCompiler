@@ -8,5 +8,4 @@ Rules:
 
 Queries:
   myTest(X,Y,Z)?
-  myTest(X,'e',X)?
   myTest(X,Y,X)?

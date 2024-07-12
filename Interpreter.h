@@ -100,6 +100,11 @@ public:
 
             std::set<int> relevantColumns; //use set to keep proper order of variables as they appear
             if (variableAndIndexes.size() > 1){
+                //testing
+                std::cout << "------------" << std::endl;
+                std::cout << modifiedRelation.toString();
+                std::cout << "------------" << std::endl;
+
                 for (const auto& pair : variableAndIndexes){
                     for (int index : pair.second){
                         relevantColumns.insert(index);
