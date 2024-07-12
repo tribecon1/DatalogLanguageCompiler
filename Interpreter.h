@@ -82,6 +82,9 @@ public:
 
                         vector<int> varIndexes = repeatVariableIndexes(paramIndex, query.getParameters());
                         variableAndIndexes[variable] = varIndexes;
+
+                        //maybe do select after this, based on how many variables I found?
+
                         for (const auto& pair : variableAndIndexes) {
                             postSelectRelation = postSelectRelation.select(pair.second);
                         }
