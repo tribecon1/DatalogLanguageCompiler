@@ -73,6 +73,7 @@ public:
             Relation postSelectRelation = newDatabase.locateRelation(query.getName());
 
 
+
             for (int paramIndex = 0; paramIndex < query.getParameters().size(); paramIndex++){
                 if(query.getParameters().at(paramIndex).isTypeID()){
                     if (variableAndIndexes.find(query.getParameters().at(paramIndex).toString()) == variableAndIndexes.end()){
