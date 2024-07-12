@@ -29,15 +29,20 @@ public:
         return name;
     }
 
+    [[nodiscard]] unsigned getTupleCount(){
+        return tuples.size();
+    }
 
 
     void addTuple(const Tuple& tuple) {
-        if (tuple.size() == column_headers.size()){
+        tuples.insert(tuple);
+
+        /*if (tuple.size() == column_headers.size()){
             tuples.insert(tuple);
         }
         else{
             throw std::out_of_range("Error! Tuple length must be length: " + std::to_string(column_headers.size()) + " to match the Scheme length");
-        }
+        }*/
     }
 
     [[nodiscard]] Relation select(int index, const string& value) const{
@@ -50,10 +55,16 @@ public:
         return result;
     }
 
-    Relation select(int index1, int index2){ //same unspecified value, diff. columns
+    [[nodiscard]] Relation select(const vector<int>& varIndexes) const{ //same unspecified value, diff. columns
         Relation result(name, column_headers);
         for (const Tuple& tuple : tuples){
-            if (tuple.at(index1) == tuple.at(index2)){
+            bool toBeAdded = true;
+            for (int index : varIndexes){
+                if (tuple.at(index) != tuple.at(0)){
+                    toBeAdded = false;
+                }
+            }
+            if (toBeAdded){
                 result.addTuple(tuple);
             }
         }
@@ -61,17 +72,43 @@ public:
     }
 
     Relation rename(const Scheme& new_scheme){
-        Relation renamedRelation = Relation(this->name, new_scheme);
+        Relation renamedRelation = *this;
+        renamedRelation.column_headers = new_scheme;
         return renamedRelation;
     }
+//    Relation rename(const std::unordered_map<string, vector<string>>& variableSpots, Relation almostFinishedScheme){
+//
+//
+//        Relation renamedRelation = Relation(name, new_scheme);
+//        return renamedRelation;
+//    }
 
-    Relation project(const std::vector<int>& chosen_columns_ind){
+//    Relation project(const std::vector<int>& chosen_columns_ind){
+//        vector<string> modScheme;
+//        modScheme.reserve(chosen_columns_ind.size());
+//        for (int col_index : chosen_columns_ind){
+//            modScheme.push_back(column_headers.at(col_index));
+//        }
+//        Relation projectedRelation = Relation(name, Scheme(modScheme));
+//
+//        for (Tuple tuple : tuples){
+//            vector<string> modTupleValues;
+//            modTupleValues.reserve(chosen_columns_ind.size());
+//            for (int tuple_index : chosen_columns_ind){
+//                modTupleValues.push_back(tuple.getValues().at(tuple_index));
+//            }
+//            projectedRelation.addTuple(Tuple(modTupleValues));
+//        }
+//
+//        return projectedRelation;
+//    }
+    Relation project(const std::set<int>& chosen_columns_ind){
         vector<string> modScheme;
         modScheme.reserve(chosen_columns_ind.size());
         for (int col_index : chosen_columns_ind){
-            modScheme.push_back(this->column_headers.at(col_index));
+            modScheme.push_back(column_headers.at(col_index));
         }
-        Relation projectedRelation = Relation(this->name, Scheme(modScheme));
+        Relation projectedRelation = Relation(name, Scheme(modScheme));
 
         for (Tuple tuple : tuples){
             vector<string> modTupleValues;
@@ -89,7 +126,7 @@ public:
     [[nodiscard]] string toString() const {
         stringstream out;
         for (const Tuple& tuple : tuples) {
-            std::cout << tuple.toString(column_headers) << std::endl;
+            std::cout << "  " << tuple.toString(column_headers) << std::endl;
         }
         return out.str();
     }

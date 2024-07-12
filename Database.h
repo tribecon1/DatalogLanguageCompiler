@@ -20,10 +20,10 @@ public:
     Database() {}
 
     void addToDatabase(Relation givenRelation){
-        relations_database.insert({givenRelation.getName() ,givenRelation});
+        relations_database.insert_or_assign(givenRelation.getName() ,givenRelation);
     }
 
-    Relation& locateRelation(const string& relation_name){
+    Relation locateRelation(const string& relation_name){
         return relations_database.at(relation_name);
     }
 
