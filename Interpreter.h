@@ -23,7 +23,6 @@ public:
     Interpreter(Datalog givenDatalog, Database emptyDatabase) : givenDatalog(std::move(givenDatalog)), newDatabase(std::move(emptyDatabase)) {}
 
 
-    //modifying methods below a method called 'fillDatabase,' which returns the mutated 'newDatabase'
 
     [[nodiscard]] Database interpret(){
 
@@ -31,7 +30,6 @@ public:
         factEval();
         //newDatabase.toString();
         //std::cout << "------------" << std::endl;
-
         queryEval();
 
         return newDatabase;
@@ -80,12 +78,6 @@ public:
 
                         vector<int> varIndexes = repeatVariableIndexes(paramIndex, query.getParameters());
                         variableAndIndexes[variable] = varIndexes;
-
-                        //maybe do select after this, based on how many variables I found?
-
-//                        for (const auto& pair : variableAndIndexes) {
-//                            modifiedRelation = modifiedRelation.select(pair.second);
-//                        }
                     }
 
                 }
@@ -98,17 +90,11 @@ public:
             for (const auto& pair : variableAndIndexes) {
                 modifiedRelation = modifiedRelation.select(pair.second);
             }
-            //test
-            //modifiedRelation = modifiedRelation.select(variableAndIndexes);
+
 
 
             std::set<int> relevantColumns; //use set to keep proper order of variables as they appear
             if (variableAndIndexes.size() > 1){
-                //testing
-//                std::cout << "------------" << std::endl;
-//                std::cout << modifiedRelation.toString();
-//                std::cout << "------------" << std::endl;
-
                 for (const auto& pair : variableAndIndexes){
                     for (int index : pair.second){
                         relevantColumns.insert(index);
@@ -123,10 +109,10 @@ public:
                 modifiedRelation = modifiedRelation.project(relevantColumns);
             }
             else{
+                //nothing to remove for columns, all constants
             }
+
             modifiedRelation = modifiedRelation.rename(Scheme(renamed_columns));
-
-
 
 
             //printing
@@ -142,8 +128,6 @@ public:
             if (!variableAndIndexes.empty()){
                 std::cout << modifiedRelation.toString();
             }
-
-
 
 
         }

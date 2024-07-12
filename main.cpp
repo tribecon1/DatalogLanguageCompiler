@@ -22,14 +22,9 @@ int main(int argc, char* argv[]) {
     in_reader.close();
 
 
-    //std::cout << input << std::endl;
     Scanner s = Scanner(input);
     std::vector<Token> tokens = s.scanToken();
 
-//    for (Token t : tokens){
-//        std::cout << t.toString() << ", ";
-//    }
-//    std::cout << std::endl;
 
     Parser p = Parser(tokens);
     Datalog newDatalog = p.datalogParser();
@@ -63,10 +58,5 @@ int main(int argc, char* argv[]) {
 
     Database modifiedDatabase = interpreter.interpret();
 
-
-
-
-//if string, call select 1 (pos, value)
-//if id, call select 2 (pos, pos)
     return 0;
 }
