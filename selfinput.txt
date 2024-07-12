@@ -17,6 +17,6 @@ Queries:
   SK(X,X)?
   SK(X,Y)?
   SK('c','c')?
-  myTest(X,Y,Z)?
+  myTest(Z,Y,X)?
   myTest(X,'e',X)?
   myTest(X,Y,X)?
