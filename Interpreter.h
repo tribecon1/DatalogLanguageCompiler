@@ -28,8 +28,6 @@ public:
 
         schemeEval();
         factEval();
-        //newDatabase.toString();
-        //std::cout << "------------" << std::endl;
         queryEval();
 
         return newDatabase;
