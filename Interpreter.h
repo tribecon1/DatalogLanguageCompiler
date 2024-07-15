@@ -94,15 +94,7 @@ public:
 
 
             std::set<int> relevantColumns; //use set to keep proper order of variables as they appear
-            if (variableAndIndexes.size() > 1){
-                for (const auto& pair : variableAndIndexes){
-                    for (int index : pair.second){
-                        relevantColumns.insert(index);
-                    }
-                }
-                modifiedRelation = modifiedRelation.project(relevantColumns);
-            }
-            else if (variableAndIndexes.size() == 1){
+            if (!variableAndIndexes.empty()){
                 for (const auto& pair : variableAndIndexes){
                     relevantColumns.insert(pair.second.front());
                 }

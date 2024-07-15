@@ -1,22 +1,30 @@
+# simple two-var selects
+
+
 Schemes:
-  SK(A,B)
-  myTest(A,B,C)
+
+  b(x,y)
+  c(x,y,z)
+
 Facts:
-  SK('a','c').
-  SK('b','c').
-  SK('b','b').
-  SK('b','c').
-  myTest('x','y','z').
-  myTest('f','f','f').
-  myTest('d','e','d').
+
+  b('1','2').
+  b('2','2').
+  b('2','1').
+  b('1','1').
+
+  c('2','2','2').
+  c('4','2','1').
+  c('1','2','4').
+  c('1','1','2').
+  c('2','4','4').
+
 Rules:
 
 Queries:
-  SK(X,'c')?
-  SK('b','c')?
-  SK(X,X)?
-  SK(X,Y)?
-  SK('c','c')?
-  myTest(Z,Y,X)?
-  myTest(X,'e',X)?
-  myTest(X,Y,X)?
+
+  b(x,x)?
+
+  c(y,y,z)?
+  c(x,y,x)?
+  c(x,z,z)?
