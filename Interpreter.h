@@ -119,7 +119,6 @@ public:
                 std::cout << modifiedRelation.toString();
             }
 
-
         }
     }
 

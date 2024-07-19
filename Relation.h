@@ -100,6 +100,19 @@ public:
     }
 
 
+    static bool joinable(const Scheme& leftScheme, const Scheme& rightScheme,
+                         const Tuple& leftTuple, const Tuple& rightTuple) {
+        // add code to test whether the tuples are joinable
+
+        for (unsigned leftIndex = 0; leftIndex < leftScheme.size(); leftIndex++) {
+            const string& leftName = leftScheme.at(leftIndex);
+            const string& leftValue = leftTuple.at(leftIndex);
+            std::cout << "left name: " << leftName << " value: " << leftValue << std::endl;
+        }
+        return true;
+    }
+
+
     [[nodiscard]] string toString() const {
         stringstream out;
         for (const Tuple& tuple : tuples) {
