@@ -35,14 +35,14 @@ public:
 
 
     void addTuple(const Tuple& tuple) {
-        tuples.insert(tuple);
+        //tuples.insert(tuple);
 
-        /*if (tuple.size() == column_headers.size()){
+        if (tuple.size() == column_headers.size()){
             tuples.insert(tuple);
         }
         else{
             throw std::out_of_range("Error! Tuple length must be length: " + std::to_string(column_headers.size()) + " to match the Scheme length");
-        }*/
+        }
     }
 
     [[nodiscard]] Relation select(int index, const string& value) const{
