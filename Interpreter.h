@@ -28,6 +28,7 @@ public:
 
         schemeEval();
         factEval();
+        //ruleEval();
         queryEval();
 
         return newDatabase;

@@ -35,12 +35,12 @@ public:
         return tuples.size();
     }
 
-
-    void addTuple(const Tuple& tuple) {
+    //made boolean to see if it was unique (the tuple that was added to the relation's set of tuples)
+    bool addTuple(const Tuple& tuple) {
         //tuples.insert(tuple);
-
         if (tuple.size() == column_headers.size()){
-            tuples.insert(tuple);
+            auto added = tuples.insert(tuple);
+            return added.second;
         }
         else{
             throw std::out_of_range("Error! Tuple length must be length: " + std::to_string(column_headers.size()) + " to match the Scheme length");
@@ -104,7 +104,6 @@ public:
 
     static bool joinable(const Scheme& leftScheme, const Scheme& rightScheme,
                          const Tuple& leftTuple, const Tuple& rightTuple) {
-
         //unordered_map<string, vector<int>> sharedColumnsAndIndexes;
 
         for (unsigned leftIndex = 0; leftIndex < leftScheme.size(); leftIndex++) {
@@ -118,27 +117,26 @@ public:
                 if (rightName == leftName && rightValue != leftValue){
                     return false;
                 }
+                //if you were to modify this to check if values DID match, the following code could work:
+                //sharedColumnsAndIndexes.insert({leftScheme.at(left_column_ind), vector<int>{left_column_ind, right_column_ind}});
+            }
+        }
+        return true;
+    }
+
+
+    Relation join(const Relation& right) {
+        const Relation& left = *this;
+        Relation result(left.name, left.column_headers);
+        // add code to complete the join operation
+        for (const Tuple& leftTuple : left.tuples){
+            std::cout << leftTuple.toString(left.column_headers) << std::endl;
+            for (const Tuple& rightTuple : right.tuples){
+                std::cout << rightTuple.toString(right.column_headers) << std::endl;
             }
         }
 
-
-        /*for (int left_column_ind = 0; left_column_ind < leftScheme.size(); left_column_ind++){
-            for (int right_column_ind = 0; right_column_ind < rightScheme.size(); right_column_ind++){
-                if (leftScheme.at(left_column_ind) == rightScheme.at(right_column_ind)){
-//                    if (leftTuple.at(left_column_ind) == rightTuple.at(right_column_ind)){
-//                        //sharedColumnsAndIndexes.insert({leftScheme.at(left_column_ind), vector<int>{left_column_ind, right_column_ind}});
-//                    }
-//                    else{
-//                        return false;
-//                    }
-                    if (leftTuple.at(left_column_ind) != rightTuple.at(right_column_ind)){
-                        return false;
-                    }
-                }
-            }
-        }*/
-
-        return true;
+        return result;
     }
 
 
