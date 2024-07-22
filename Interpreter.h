@@ -29,7 +29,11 @@ public:
         schemeEval();
         factEval();
         //ruleEval();
-        queryEval();
+
+        for (const Predicate& query : givenDatalog.getQueries()){
+            queryEval(query);
+        }
+        //queryEval();
 
         return newDatabase;
     }
@@ -62,66 +66,62 @@ public:
     }
 
 
-    void queryEval(){
-        for (Predicate query : givenDatalog.getQueries()){
-            unordered_map<string, vector<int>> variableAndIndexes;
-            vector<string> renamed_columns;
+    void queryEval(Predicate query){
+        unordered_map<string, vector<int>> variableAndIndexes;
+        vector<string> renamed_columns;
 
-            Relation modifiedRelation = newDatabase.locateRelation(query.getName());
+        Relation modifiedRelation = newDatabase.locateRelation(query.getName());
 
-            for (int paramIndex = 0; paramIndex < query.getParameters().size(); paramIndex++){
-                if(query.getParameters().at(paramIndex).isTypeID()){
-                    if (variableAndIndexes.find(query.getParameters().at(paramIndex).toString()) == variableAndIndexes.end()){
-                        string variable = query.getParameters().at(paramIndex).toString();
-                        renamed_columns.push_back(variable);
+        for (int paramIndex = 0; paramIndex < query.getParameters().size(); paramIndex++){
+            if(query.getParameters().at(paramIndex).isTypeID()){
+                if (variableAndIndexes.find(query.getParameters().at(paramIndex).toString()) == variableAndIndexes.end()){
+                    string variable = query.getParameters().at(paramIndex).toString();
+                    renamed_columns.push_back(variable);
 
-                        vector<int> varIndexes = repeatVariableIndexes(paramIndex, query.getParameters());
-                        variableAndIndexes[variable] = varIndexes;
-                    }
-
+                    vector<int> varIndexes = repeatVariableIndexes(paramIndex, query.getParameters());
+                    variableAndIndexes[variable] = varIndexes;
                 }
-                else{
-                    string constant = query.getParameters().at(paramIndex).toString();
-                    modifiedRelation = modifiedRelation.select(paramIndex, constant);
-                }
-            }
 
-            for (const auto& pair : variableAndIndexes) {
-                modifiedRelation = modifiedRelation.select(pair.second);
-            }
-
-
-
-            std::set<int> relevantColumns; //use set to keep proper order of variables as they appear
-            if (!variableAndIndexes.empty()){
-                for (const auto& pair : variableAndIndexes){
-                    relevantColumns.insert(pair.second.front());
-                }
-                modifiedRelation = modifiedRelation.project(relevantColumns);
             }
             else{
-                //nothing to remove for columns, all constants
+                string constant = query.getParameters().at(paramIndex).toString();
+                modifiedRelation = modifiedRelation.select(paramIndex, constant);
             }
-
-            modifiedRelation = modifiedRelation.rename(Scheme(renamed_columns));
-
-
-            //printing
-            string header;
-            header = query.toString() + "? ";
-            if (modifiedRelation.getTupleCount() == 0){
-                header += "No";
-            }
-            else{
-                header += "Yes(" + std::to_string(modifiedRelation.getTupleCount()) + ")";
-            }
-            std::cout << header << std::endl;
-            if (!variableAndIndexes.empty()){
-                std::cout << modifiedRelation.toString();
-            }
-
         }
-    }
 
+        for (const auto& pair : variableAndIndexes) {
+            modifiedRelation = modifiedRelation.select(pair.second);
+        }
+
+
+
+        std::set<int> relevantColumns; //use set to keep proper order of variables as they appear
+        if (!variableAndIndexes.empty()){
+            for (const auto& pair : variableAndIndexes){
+                relevantColumns.insert(pair.second.front());
+            }
+            modifiedRelation = modifiedRelation.project(relevantColumns);
+        }
+        else{
+            //nothing to remove for columns, all constants
+        }
+
+        modifiedRelation = modifiedRelation.rename(Scheme(renamed_columns));
+
+        //printing
+        /*string header;
+        header = query.toString() + "? ";
+        if (modifiedRelation.getTupleCount() == 0){
+            header += "No";
+        }
+        else{
+            header += "Yes(" + std::to_string(modifiedRelation.getTupleCount()) + ")";
+        }
+        std::cout << header << std::endl;
+        if (!variableAndIndexes.empty()){
+            std::cout << modifiedRelation.toString();
+        }*/
+
+    }
 
 };

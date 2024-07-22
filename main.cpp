@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
     Database newDatabase;
     Interpreter interpreter = Interpreter(newDatalog, newDatabase);
 
-    //Database modifiedDatabase = interpreter.interpret();
+    Database modifiedDatabase = interpreter.interpret();
 /*
     Scheme scheme1( { "A", "B" } );
     Scheme scheme2( { "B", "C" } );
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
     std::cout << Relation::joinable(scheme3, scheme4, tuple3, tuple4) << std::endl;
 */
 
-    Relation studentRelation("students", Scheme( {"ID", "Name", "Major"} ));
+    /*Relation studentRelation("students", Scheme( {"ID", "Name", "Major"} ));
 
     vector<string> studentValues[] = {
             {"'42'", "'Ann'", "'CS'"},
@@ -74,6 +74,6 @@ int main(int argc, char* argv[]) {
         courseRelation.addTuple(Tuple(value));
     }
 
-    studentRelation.join(courseRelation);
+    studentRelation.join(courseRelation);*/
     return 0;
 }
