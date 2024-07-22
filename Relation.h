@@ -8,6 +8,8 @@ using std::stringstream;
 #include <utility>
 #include <vector>
 using std::vector;
+#include <unordered_map>
+using std::unordered_map;
 #include <set>
 using std::set;
 
@@ -102,13 +104,40 @@ public:
 
     static bool joinable(const Scheme& leftScheme, const Scheme& rightScheme,
                          const Tuple& leftTuple, const Tuple& rightTuple) {
-        // add code to test whether the tuples are joinable
+
+        //unordered_map<string, vector<int>> sharedColumnsAndIndexes;
 
         for (unsigned leftIndex = 0; leftIndex < leftScheme.size(); leftIndex++) {
             const string& leftName = leftScheme.at(leftIndex);
             const string& leftValue = leftTuple.at(leftIndex);
             std::cout << "left name: " << leftName << " value: " << leftValue << std::endl;
+            for (unsigned rightIndex = 0; rightIndex < rightScheme.size(); rightIndex++) {
+                const string& rightName = rightScheme.at(rightIndex);
+                const string& rightValue = rightTuple.at(rightIndex);
+                std::cout << "right name: " << rightName << " value: " << rightValue << std::endl;
+                if (rightName == leftName && rightValue != leftValue){
+                    return false;
+                }
+            }
         }
+
+
+        /*for (int left_column_ind = 0; left_column_ind < leftScheme.size(); left_column_ind++){
+            for (int right_column_ind = 0; right_column_ind < rightScheme.size(); right_column_ind++){
+                if (leftScheme.at(left_column_ind) == rightScheme.at(right_column_ind)){
+//                    if (leftTuple.at(left_column_ind) == rightTuple.at(right_column_ind)){
+//                        //sharedColumnsAndIndexes.insert({leftScheme.at(left_column_ind), vector<int>{left_column_ind, right_column_ind}});
+//                    }
+//                    else{
+//                        return false;
+//                    }
+                    if (leftTuple.at(left_column_ind) != rightTuple.at(right_column_ind)){
+                        return false;
+                    }
+                }
+            }
+        }*/
+
         return true;
     }
 
