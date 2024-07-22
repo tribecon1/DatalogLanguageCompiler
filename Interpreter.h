@@ -29,11 +29,9 @@ public:
         schemeEval();
         factEval();
         //ruleEval();
-
         for (const Predicate& query : givenDatalog.getQueries()){
             queryEval(query);
         }
-        //queryEval();
 
         return newDatabase;
     }

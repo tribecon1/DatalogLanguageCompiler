@@ -124,10 +124,24 @@ public:
         return true;
     }
 
+    Scheme schemeJoiner(const Scheme& leftScheme, const Scheme& rightScheme){
+        vector<string> joinedSchemeColumns;
+        set<string> unique;
+        for (const string& leftColumn : leftScheme){
+            for (const string& rightColumn : rightScheme){
+                if (leftColumn == rightColumn && unique.insert(leftColumn).second){
+                    joinedSchemeColumns.push_back(leftColumn);
+                }
+            }
+        }
+        return Scheme(joinedSchemeColumns);
+    }
+
 
     Relation join(const Relation& right) {
         const Relation& left = *this;
-        Relation result(left.name, left.column_headers);
+        Relation result(left.name, schemeJoiner(left.column_headers, right.column_headers));
+        std::cout << result.toString() << std::endl;
         // add code to complete the join operation
         for (const Tuple& leftTuple : left.tuples){
             std::cout << leftTuple.toString(left.column_headers) << std::endl;

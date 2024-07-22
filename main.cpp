@@ -7,9 +7,6 @@ using std::vector;
 #include "Scanner.h"
 #include "Parser.h"
 #include "ParserObjects.h"
-#include "Scheme.h"
-#include "Tuple.h"
-#include "Relation.h"
 #include "Interpreter.h"
 
 int main(int argc, char* argv[]) {
@@ -33,35 +30,17 @@ int main(int argc, char* argv[]) {
     Interpreter interpreter = Interpreter(newDatalog, newDatabase);
 
     Database modifiedDatabase = interpreter.interpret();
-/*
-    Scheme scheme1( { "A", "B" } );
-    Scheme scheme2( { "B", "C" } );
 
-    Tuple tuple1( {"'1'", "'2'"} );
-    Tuple tuple2( {"'3'", "'4'"} );
-
-    Scheme scheme3( { "X", "Y" } );
-    Scheme scheme4( { "X", "Y", "Z" } );
-
-    Tuple tuple3( {"'1'", "'4'"} );
-    Tuple tuple4( {"'1'", "'2'", "'4'"} );
-
-    std::cout << Relation::joinable(scheme1, scheme2, tuple1, tuple2) << std::endl;
-    std::cout << Relation::joinable(scheme2, scheme3, tuple1, tuple2) << std::endl;
-    std::cout << Relation::joinable(scheme3, scheme4, tuple1, tuple4) << std::endl;
-    std::cout << Relation::joinable(scheme3, scheme4, tuple3, tuple4) << std::endl;
-*/
-
-    /*Relation studentRelation("students", Scheme( {"ID", "Name", "Major"} ));
+    Relation studentRelation("students", Scheme( {"ID", "Name", "Major"} ));
 
     vector<string> studentValues[] = {
             {"'42'", "'Ann'", "'CS'"},
             {"'64'", "'Ned'", "'EE'"},
     };
 
-    for (auto& value : studentValues)
+    for (auto& value : studentValues){
         studentRelation.addTuple(Tuple(value));
-
+    }
 
     Relation courseRelation("courses", Scheme( {"ID", "Course"} ));
 
@@ -70,10 +49,12 @@ int main(int argc, char* argv[]) {
             {"'32'", "'CS 232'"},
     };
 
-    for (auto& value : courseValues){
+    for (auto& value : courseValues)
         courseRelation.addTuple(Tuple(value));
-    }
 
-    studentRelation.join(courseRelation);*/
+    studentRelation.join(courseRelation);
+
+
+
     return 0;
 }

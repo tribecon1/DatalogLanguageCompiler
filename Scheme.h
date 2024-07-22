@@ -2,6 +2,7 @@
 
 #include <string>
 using std::string;
+#include <utility>
 #include <vector>
 using std::vector;
 
@@ -11,6 +12,6 @@ class Scheme : public vector<string> {
 
 public:
 
-    Scheme(vector<string> names) : vector<string>(names) { }
+    explicit Scheme(vector<string> names) : vector<string>(std::move(names)) { }
 
 };
