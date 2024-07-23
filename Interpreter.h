@@ -28,7 +28,7 @@ public:
 
         schemeEval();
         factEval();
-        //ruleEval();
+        ruleEval();
         for (const Predicate& query : givenDatalog.getQueries()){
             queryEval(query);
         }
@@ -52,6 +52,28 @@ public:
         }
     }
 
+
+    void ruleEval(){
+        vector<Relation> relationsToJoin;
+        //implement fixed-pt. algorithm
+
+        for (Rule rule : givenDatalog.getRules()){
+            for (const Predicate& bodyPred : rule.getBodyPredicates()){
+                relationsToJoin.push_back(queryEval(bodyPred));
+            }
+        }
+
+        for (const Relation& changedRelation : relationsToJoin){
+            std::cout << changedRelation.toString() << std::endl;
+        }
+
+
+    }
+
+
+
+
+
     static vector<int> repeatVariableIndexes(int start, const vector<Parameter>& listOfParams){
         vector<int> repeatVarIndexes;
         repeatVarIndexes.push_back(start);
@@ -64,7 +86,7 @@ public:
     }
 
 
-    void queryEval(Predicate query){
+    Relation queryEval(Predicate query){
         unordered_map<string, vector<int>> variableAndIndexes;
         vector<string> renamed_columns;
 
@@ -120,6 +142,7 @@ public:
             std::cout << modifiedRelation.toString();
         }*/
 
+        return modifiedRelation;
     }
 
 };

@@ -49,11 +49,12 @@ int main(int argc, char* argv[]) {
             {"'32'", "'CS 232'"},
     };
 
-    for (auto& value : courseValues)
+    for (auto& value : courseValues){
         courseRelation.addTuple(Tuple(value));
+    }
 
-    studentRelation.join(courseRelation);
-
+    Relation joined = studentRelation.join(courseRelation);
+    //std::cout << joined.toString() << std::endl;
 
 
     return 0;

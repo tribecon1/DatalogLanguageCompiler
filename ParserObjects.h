@@ -102,6 +102,14 @@ public:
         }
     }
 
+    vector<Predicate> getBodyPredicates(){
+        return bodyPredicates;
+    }
+
+    Predicate getHeadPredicate(){
+        return headPredicate;
+    }
+
     [[nodiscard]] std::string toString(){
         stringstream ss;
         ss << headPredicate.toString() << " :- ";

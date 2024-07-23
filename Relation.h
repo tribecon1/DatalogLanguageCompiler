@@ -107,24 +107,22 @@ public:
 
 
 
-    static pair<bool,unordered_map<string, vector<int>>> joinable(const Scheme& leftScheme, const Scheme& rightScheme,
+    static pair<bool,unordered_map<string, int>> joinable(const Scheme& leftScheme, const Scheme& rightScheme,
                          const Tuple& leftTuple, const Tuple& rightTuple) {
-        unordered_map<string, vector<int>> sharedColumnsAndIndexes;
+        unordered_map<string, int> sharedColumnsAndIndexes;
 
         for (int leftIndex = 0; leftIndex < leftScheme.size(); leftIndex++) {
             const string& leftName = leftScheme.at(leftIndex);
             const string& leftValue = leftTuple.at(leftIndex);
-            std::cout << "left name: " << leftName << " value: " << leftValue << std::endl;
             for (int rightIndex = 0; rightIndex < rightScheme.size(); rightIndex++) {
                 const string& rightName = rightScheme.at(rightIndex);
                 const string& rightValue = rightTuple.at(rightIndex);
-                std::cout << "right name: " << rightName << " value: " << rightValue << std::endl;
                 if (rightName == leftName){
                     if (rightValue != leftValue){
                         return {false, sharedColumnsAndIndexes};
                     }
                     else{
-                        sharedColumnsAndIndexes.insert({leftScheme.at(leftIndex), vector<int>{rightIndex}});
+                        sharedColumnsAndIndexes.insert({leftScheme.at(leftIndex), rightIndex});
                     }
                 }
             }
@@ -142,11 +140,11 @@ public:
         return {leftScheme};
     }
 
-    Tuple tupleJoiner(const unordered_map<string, vector<int>>& sharedColumnsAndIndexes, Tuple leftTuple, Tuple rightTuple){
+    Tuple tupleJoiner(const unordered_map<string, int>& sharedColumnsAndIndexes, Tuple leftTuple, Tuple rightTuple){
         vector<string> newTupleVals = leftTuple.getValues();
         vector<string> remainingUniqueVals = rightTuple.getValues();
-        for (const auto& colAndIndexes : sharedColumnsAndIndexes){
-            remainingUniqueVals.erase(remainingUniqueVals.begin() + colAndIndexes.second.front());
+        for (const auto& colAndIndexes : sharedColumnsAndIndexes){ //for if they have multiple shared columns
+            remainingUniqueVals.erase(remainingUniqueVals.begin() + colAndIndexes.second);
         }
         for (const string& remainingVal : remainingUniqueVals){
             newTupleVals.push_back(remainingVal);
@@ -166,26 +164,36 @@ public:
     Relation join(const Relation& right) {
         const Relation& left = *this;
         Scheme joinedScheme = schemeJoiner(left.column_headers, right.column_headers);
-        Relation result(left.name, joinedScheme);
-        if(joinedScheme.size() == left.column_headers.size() + right.column_headers.size()){
-            //join tuples that share no common elements
-            for (const Tuple& leftTuple : left.tuples){
-                for (const Tuple& rightTuple : right.tuples){
-                    result.addTuple(unrelatedTuplesJoin(leftTuple, rightTuple));
-                    //UTILIZE BOOL RETURN VAL OF addTuple LATER FOR EACH RULE
-                }
-            }
+
+        //TESTING
+        /*stringstream ss;
+        ss << "Left Scheme!\n";
+        for (const auto & col : left.column_headers){
+            ss << col << ", ";
         }
-        else{
-            //join tuples that share 1 or more common elements
-            for (const Tuple& leftTuple : left.tuples){
-                for (const Tuple& rightTuple : right.tuples){
-                    auto joinChecker = joinable(left.column_headers, right.column_headers, leftTuple, rightTuple);
-                    if (joinChecker.first){
-                        Tuple joinedTuple = tupleJoiner(joinChecker.second, leftTuple, rightTuple);
-                        result.addTuple(joinedTuple);
-                        //UTILIZE BOOL RETURN VAL OF addTuple LATER FOR EACH RULE
-                    }
+        ss << left.toString() << "\n";
+        ss<<"\n";
+        ss << "Right Scheme!\n";
+        for (const auto & col : right.column_headers){
+            ss << col << ", ";
+        }
+        ss << right.toString() << "\n";
+        ss << "\n";
+        ss << "New joined Scheme!\n";
+        for (const auto & col : joinedScheme){
+            ss << col << ", ";
+        }
+        std::cout << ss.str() << std::endl;*/
+        //ENDS HERE
+
+        Relation result(left.name, joinedScheme);
+        for (const Tuple& leftTuple : left.tuples){
+            for (const Tuple& rightTuple : right.tuples){
+                auto joinChecker = joinable(left.column_headers, right.column_headers, leftTuple, rightTuple);
+                if (joinChecker.first){
+                    Tuple joinedTuple = tupleJoiner(joinChecker.second, leftTuple, rightTuple);
+                    result.addTuple(joinedTuple);
+                    //UTILIZE BOOL RETURN VAL OF addTuple LATER FOR EACH RULE
                 }
             }
         }

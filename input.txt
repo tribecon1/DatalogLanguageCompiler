@@ -1,15 +1,12 @@
 Schemes:
-  SK(A,B)
+  f(A,B)
+  b(C,D)
 Facts:
-  SK('a','c').
-  SK('b','c').
-  SK('b','b').
-  SK('b','c').
+  f('1','1').
+  f('1','2').
+  f('2','3').
 Rules:
-
+  b(X,Y) :- f(X,Z), f(Z,Y).
 Queries:
-  SK(X,'c')?
-  SK('b','c')?
-  SK(X,X)?
-  SK(X,Y)?
-  SK('c','c')?
+  b('1',X)?
+
