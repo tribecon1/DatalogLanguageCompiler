@@ -6,6 +6,8 @@
 using std::string;
 #include <unordered_map>
 using std::unordered_map;
+#include <queue>
+using std::queue;
 
 #include "ParserObjects.h"
 #include "Database.h"
@@ -54,18 +56,37 @@ public:
 
 
     void ruleEval(){
-        vector<Relation> relationsToJoin;
+        queue<Relation> relationsToJoin;
+        //fortesting
+        vector<Relation> preJoined;
         //implement fixed-pt. algorithm
 
         for (Rule rule : givenDatalog.getRules()){
             for (const Predicate& bodyPred : rule.getBodyPredicates()){
-                relationsToJoin.push_back(queryEval(bodyPred));
+                relationsToJoin.push(queryEval(bodyPred));
+                preJoined.push_back(queryEval(bodyPred));
             }
         }
 
-        for (const Relation& changedRelation : relationsToJoin){
-            std::cout << changedRelation.toString() << std::endl;
+        for (const Relation& pred : preJoined){
+            std::cout << pred.toString() << std::endl;
         }
+
+        while (relationsToJoin.size() > 1){
+            Relation leftRelation = relationsToJoin.front();
+            relationsToJoin.pop();
+            Relation rightRelation = relationsToJoin.front();
+            relationsToJoin.pop();
+            Relation joinedRelation = leftRelation.join(rightRelation);
+            relationsToJoin.push(joinedRelation);
+        }
+
+        Relation finalRelation = relationsToJoin.front();
+        relationsToJoin.pop();
+
+        std::cout << finalRelation.toString() << std::endl;
+
+
 
 
     }
