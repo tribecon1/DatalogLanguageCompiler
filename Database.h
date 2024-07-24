@@ -27,8 +27,12 @@ public:
         return relations_database.at(relation_name);
     }
 
-    unsigned getRelationCount(){
-        return relations_database.size();
+    unsigned getTuplesCount(){
+        unsigned tupleCount = 0;
+        for (auto pair : relations_database){
+            tupleCount += pair.second.getTupleCount();
+        }
+        return tupleCount;
     }
 
     void toString(){

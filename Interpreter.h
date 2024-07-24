@@ -57,10 +57,15 @@ public:
 
     void ruleEval(){
         queue<Relation> relationsToJoin;
-        //for testing
+        //vector for testing
         vector<Relation> preJoined;
         //implement fixed-pt. algorithm
 
+        bool tupleFound = true;
+        unsigned iter_count = 1;
+        while (tupleFound){
+            tupleFound = false;
+        }
 
         for (Rule rule : givenDatalog.getRules()){
             for (const Predicate& bodyPred : rule.getBodyPredicates()){
@@ -80,20 +85,29 @@ public:
                 relationsToJoin.push(joinedRelation);
             }
 
-            Relation finalRelation = relationsToJoin.front();
+            Relation finalJoinedRelation = relationsToJoin.front();
             relationsToJoin.pop();
 
-            std::cout << finalRelation.toString() << std::endl;
-            for (const Parameter& param : rule.getHeadPredicate().getParameters()){
-                std::cout << param.toString() << std::endl;
-            }
-            set<int> columnsToProject = columnIndexConverter(rule.getHeadPredicate().getParameters(), finalRelation.getScheme());
-            for (const int& index : columnsToProject){
-                std::cout << index << std::endl;
-            }
+            std::cout << finalJoinedRelation.toString() << std::endl;
 
-            finalRelation = finalRelation.project(columnsToProject);
+            vector<int> columnsToProject = columnIndexConverter(rule.getHeadPredicate().getParameters(), finalJoinedRelation.getScheme());
+
+            finalJoinedRelation = finalJoinedRelation.project(columnsToProject);
+
+            Relation finalRelation = newDatabase.locateRelation(rule.getHeadPredicate().getName());
+            unsigned prevTupleSize = newDatabase.getTuplesCount();
+            finalJoinedRelation = finalJoinedRelation.rename(finalRelation.getScheme());
+
+            std::cout << finalRelation.getName() << std::endl;
             std::cout << finalRelation.toString() << std::endl;
+            finalRelation = finalRelation.relationUnion(finalJoinedRelation);
+            std::cout << finalRelation.getName() << std::endl;
+            std::cout << finalRelation.toString() << std::endl;
+            newDatabase.addToDatabase(finalRelation);
+            if (newDatabase.getTuplesCount() > prevTupleSize){
+                iter_count++;
+                tupleFound = true;
+            }
 
 
 
@@ -105,13 +119,13 @@ public:
     }
 
 
-    static set<int> columnIndexConverter(const vector<Parameter>& headPredicateVars, const Scheme& joinedRelationScheme){
-        set<int> columnsToProject;
+    static vector<int> columnIndexConverter(const vector<Parameter>& headPredicateVars, const Scheme& joinedRelationScheme){
+        vector<int> columnsToProject;
 
         for (const Parameter& var : headPredicateVars){
-            for (unsigned index = 0; index < joinedRelationScheme.size(); index++){
+            for (int index = 0; index < joinedRelationScheme.size(); index++){
                 if (joinedRelationScheme.at(index) == var.toString()){
-                    columnsToProject.insert(index);
+                    columnsToProject.push_back(index);
                 }
             }
         }
@@ -161,12 +175,13 @@ public:
 
 
 
-        std::set<int> relevantColumns; //use set to keep proper order of variables as they appear
+        std::set<int> relevantColumnsOrdered; //use set to keep proper order of variables as they appear
         if (!variableAndIndexes.empty()){
             for (const auto& pair : variableAndIndexes){
-                relevantColumns.insert(pair.second.front());
+                relevantColumnsOrdered.insert(pair.second.front());
             }
-            modifiedRelation = modifiedRelation.project(relevantColumns);
+            vector<int> relevantColumnsFinal(relevantColumnsOrdered.begin(), relevantColumnsOrdered.end());
+            modifiedRelation = modifiedRelation.project(relevantColumnsFinal);
         }
         else{
             //nothing to remove for columns, all constants

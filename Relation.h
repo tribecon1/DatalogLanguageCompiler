@@ -87,7 +87,7 @@ public:
     }
 
 
-    Relation project(const std::set<int>& chosen_columns_ind){
+    Relation project(const vector<int>& chosen_columns_ind){
         vector<string> modScheme;
         modScheme.reserve(chosen_columns_ind.size());
         for (int col_index : chosen_columns_ind){
@@ -174,6 +174,15 @@ public:
         }
 
         return result;
+    }
+
+
+    [[nodiscard]] Relation relationUnion(const Relation& joinedRelation){
+        Relation modifiedRelation = *this;
+        for (const Tuple& tuple : joinedRelation.tuples){
+            modifiedRelation.addTuple(tuple);
+        }
+        return modifiedRelation;
     }
 
 
