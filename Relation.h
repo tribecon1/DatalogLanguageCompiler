@@ -177,10 +177,13 @@ public:
     }
 
 
-    [[nodiscard]] Relation relationUnion(const Relation& joinedRelation){
+    [[nodiscard]] Relation relationUnion(const Relation& joinedRelation, stringstream& forRuleOutput){
         Relation modifiedRelation = *this;
         for (const Tuple& tuple : joinedRelation.tuples){
-            modifiedRelation.addTuple(tuple);
+            bool added = modifiedRelation.addTuple(tuple);
+            if (added){
+                forRuleOutput << "  " << tuple.toString(joinedRelation.column_headers) << "\n";
+            }
         }
         return modifiedRelation;
     }

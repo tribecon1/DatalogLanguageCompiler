@@ -57,64 +57,52 @@ public:
 
     void ruleEval(){
         queue<Relation> relationsToJoin;
-        //vector for testing
-        vector<Relation> preJoined;
-        //implement fixed-pt. algorithm
+
+        stringstream ruleEvalOutput;
 
         bool tupleFound = true;
         unsigned iter_count = 1;
         while (tupleFound){
             tupleFound = false;
+            for (Rule rule : givenDatalog.getRules()){
+
+                ruleEvalOutput << rule.toString() << "\n";
+
+                for (const Predicate& bodyPred : rule.getBodyPredicates()){
+                    relationsToJoin.push(queryEval(bodyPred));
+                }
+                while (relationsToJoin.size() > 1){
+                    Relation leftRelation = relationsToJoin.front();
+                    relationsToJoin.pop();
+                    Relation rightRelation = relationsToJoin.front();
+                    relationsToJoin.pop();
+                    Relation joinedRelation = leftRelation.join(rightRelation);
+                    relationsToJoin.push(joinedRelation);
+                }
+                Relation finalJoinedRelation = relationsToJoin.front();
+                relationsToJoin.pop();
+
+                vector<int> columnsToProject = columnIndexConverter(rule.getHeadPredicate().getParameters(), finalJoinedRelation.getScheme());
+                finalJoinedRelation = finalJoinedRelation.project(columnsToProject);
+
+                Relation finalRelation = newDatabase.locateRelation(rule.getHeadPredicate().getName());
+                unsigned prevTupleSize = newDatabase.getTuplesCount();
+                finalJoinedRelation = finalJoinedRelation.rename(finalRelation.getScheme());
+
+                finalRelation = finalRelation.relationUnion(finalJoinedRelation, ruleEvalOutput);
+                newDatabase.addToDatabase(finalRelation);
+
+                if (newDatabase.getTuplesCount() > prevTupleSize){
+                    iter_count++;
+                    tupleFound = true;
+                }
+
+            }
         }
 
-        for (Rule rule : givenDatalog.getRules()){
-            for (const Predicate& bodyPred : rule.getBodyPredicates()){
-                relationsToJoin.push(queryEval(bodyPred));
-                preJoined.push_back(queryEval(bodyPred));
-            }
-            for (const Relation& pred : preJoined){
-                std::cout << pred.toString() << std::endl;
-            }
-
-            while (relationsToJoin.size() > 1){
-                Relation leftRelation = relationsToJoin.front();
-                relationsToJoin.pop();
-                Relation rightRelation = relationsToJoin.front();
-                relationsToJoin.pop();
-                Relation joinedRelation = leftRelation.join(rightRelation);
-                relationsToJoin.push(joinedRelation);
-            }
-
-            Relation finalJoinedRelation = relationsToJoin.front();
-            relationsToJoin.pop();
-
-            std::cout << finalJoinedRelation.toString() << std::endl;
-
-            vector<int> columnsToProject = columnIndexConverter(rule.getHeadPredicate().getParameters(), finalJoinedRelation.getScheme());
-
-            finalJoinedRelation = finalJoinedRelation.project(columnsToProject);
-
-            Relation finalRelation = newDatabase.locateRelation(rule.getHeadPredicate().getName());
-            unsigned prevTupleSize = newDatabase.getTuplesCount();
-            finalJoinedRelation = finalJoinedRelation.rename(finalRelation.getScheme());
-
-            std::cout << finalRelation.getName() << std::endl;
-            std::cout << finalRelation.toString() << std::endl;
-            finalRelation = finalRelation.relationUnion(finalJoinedRelation);
-            std::cout << finalRelation.getName() << std::endl;
-            std::cout << finalRelation.toString() << std::endl;
-            newDatabase.addToDatabase(finalRelation);
-            if (newDatabase.getTuplesCount() > prevTupleSize){
-                iter_count++;
-                tupleFound = true;
-            }
-
-
-
-
-        }
-
-
+        std::cout << "Rule Evaluation" << std::endl;
+        std::cout << ruleEvalOutput.str() << std::endl;
+        std::cout << "Schemes populated after " << iter_count << " passes through the Rules." << std::endl;
 
     }
 
