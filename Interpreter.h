@@ -57,42 +57,67 @@ public:
 
     void ruleEval(){
         queue<Relation> relationsToJoin;
-        //fortesting
+        //for testing
         vector<Relation> preJoined;
         //implement fixed-pt. algorithm
+
 
         for (Rule rule : givenDatalog.getRules()){
             for (const Predicate& bodyPred : rule.getBodyPredicates()){
                 relationsToJoin.push(queryEval(bodyPred));
                 preJoined.push_back(queryEval(bodyPred));
             }
-        }
+            for (const Relation& pred : preJoined){
+                std::cout << pred.toString() << std::endl;
+            }
 
-        for (const Relation& pred : preJoined){
-            std::cout << pred.toString() << std::endl;
-        }
+            while (relationsToJoin.size() > 1){
+                Relation leftRelation = relationsToJoin.front();
+                relationsToJoin.pop();
+                Relation rightRelation = relationsToJoin.front();
+                relationsToJoin.pop();
+                Relation joinedRelation = leftRelation.join(rightRelation);
+                relationsToJoin.push(joinedRelation);
+            }
 
-        while (relationsToJoin.size() > 1){
-            Relation leftRelation = relationsToJoin.front();
+            Relation finalRelation = relationsToJoin.front();
             relationsToJoin.pop();
-            Relation rightRelation = relationsToJoin.front();
-            relationsToJoin.pop();
-            Relation joinedRelation = leftRelation.join(rightRelation);
-            relationsToJoin.push(joinedRelation);
+
+            std::cout << finalRelation.toString() << std::endl;
+            for (const Parameter& param : rule.getHeadPredicate().getParameters()){
+                std::cout << param.toString() << std::endl;
+            }
+            set<int> columnsToProject = columnIndexConverter(rule.getHeadPredicate().getParameters(), finalRelation.getScheme());
+            for (const int& index : columnsToProject){
+                std::cout << index << std::endl;
+            }
+
+            finalRelation = finalRelation.project(columnsToProject);
+            std::cout << finalRelation.toString() << std::endl;
+
+
+
+
         }
-
-        Relation finalRelation = relationsToJoin.front();
-        relationsToJoin.pop();
-
-        std::cout << finalRelation.toString() << std::endl;
-
 
 
 
     }
 
 
+    static set<int> columnIndexConverter(const vector<Parameter>& headPredicateVars, const Scheme& joinedRelationScheme){
+        set<int> columnsToProject;
 
+        for (const Parameter& var : headPredicateVars){
+            for (unsigned index = 0; index < joinedRelationScheme.size(); index++){
+                if (joinedRelationScheme.at(index) == var.toString()){
+                    columnsToProject.insert(index);
+                }
+            }
+        }
+
+        return columnsToProject;
+    }
 
 
     static vector<int> repeatVariableIndexes(int start, const vector<Parameter>& listOfParams){

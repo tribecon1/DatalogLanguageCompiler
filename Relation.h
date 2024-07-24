@@ -33,6 +33,10 @@ public:
         return name;
     }
 
+    [[nodiscard]] Scheme getScheme(){
+        return column_headers;
+    }
+
     [[nodiscard]] unsigned getTupleCount(){
         return tuples.size();
     }
@@ -152,39 +156,10 @@ public:
         return Tuple(newTupleVals);
     }
 
-    Tuple unrelatedTuplesJoin(Tuple leftTuple, const Tuple& rightTuple) {
-        vector<string> newTupleValues = leftTuple.getValues();
-        for (unsigned ind = 0; ind < rightTuple.size(); ind++) {
-            newTupleValues.push_back(rightTuple.at(ind));
-        }
-        return Tuple(newTupleValues);
-    }
-
 
     Relation join(const Relation& right) {
         const Relation& left = *this;
         Scheme joinedScheme = schemeJoiner(left.column_headers, right.column_headers);
-
-        //TESTING
-        /*stringstream ss;
-        ss << "Left Scheme!\n";
-        for (const auto & col : left.column_headers){
-            ss << col << ", ";
-        }
-        ss << left.toString() << "\n";
-        ss<<"\n";
-        ss << "Right Scheme!\n";
-        for (const auto & col : right.column_headers){
-            ss << col << ", ";
-        }
-        ss << right.toString() << "\n";
-        ss << "\n";
-        ss << "New joined Scheme!\n";
-        for (const auto & col : joinedScheme){
-            ss << col << ", ";
-        }
-        std::cout << ss.str() << std::endl;*/
-        //ENDS HERE
 
         Relation result(left.name, joinedScheme);
         for (const Tuple& leftTuple : left.tuples){
