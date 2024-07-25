@@ -99,11 +99,11 @@ public:
             iter_count++;
         }
 
+        //Project 4 (+ Project 3) Output Printing
         std::cout << "Rule Evaluation" << std::endl;
         std::cout << ruleEvalOutput.str() << std::endl;
         std::cout << "Schemes populated after " << iter_count << " passes through the Rules.\n" << std::endl;
         std::cout << "Query Evaluation" << std::endl;
-
 
     }
 

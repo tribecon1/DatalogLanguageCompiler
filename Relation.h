@@ -113,7 +113,6 @@ public:
 
     static pair<bool,set<int>> joinable(const Scheme& leftScheme, const Scheme& rightScheme,
                          const Tuple& leftTuple, const Tuple& rightTuple) {
-        //unordered_map<string, int> sharedColumnsAndIndexes;
         set<int> sharedColumnsAndIndexes;
 
 
@@ -128,7 +127,6 @@ public:
                         return {false, sharedColumnsAndIndexes};
                     }
                     else{
-//                        sharedColumnsAndIndexes.insert({leftScheme.at(leftIndex), rightIndex});
                         sharedColumnsAndIndexes.insert(rightIndex);
                     }
                 }
@@ -180,7 +178,6 @@ public:
                 if (joinChecker.first){
                     Tuple joinedTuple = tupleJoiner(joinChecker.second, leftTuple, rightTuple);
                     result.addTuple(joinedTuple);
-                    //UTILIZE BOOL RETURN VAL OF addTuple LATER FOR EACH RULE
                 }
             }
         }
