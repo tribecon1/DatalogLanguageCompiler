@@ -32,7 +32,7 @@ public:
         factEval();
         ruleEval();
         for (const Predicate& query : givenDatalog.getQueries()){
-            queryEval(query);
+            queryEval(query, true);
         }
 
         return newDatabase;
@@ -61,7 +61,7 @@ public:
         stringstream ruleEvalOutput;
 
         bool tupleFound = true;
-        unsigned iter_count = 1;
+        unsigned iter_count = 0;
         while (tupleFound){
             tupleFound = false;
             for (Rule rule : givenDatalog.getRules()){
@@ -69,7 +69,7 @@ public:
                 ruleEvalOutput << rule.toString() << "\n";
 
                 for (const Predicate& bodyPred : rule.getBodyPredicates()){
-                    relationsToJoin.push(queryEval(bodyPred));
+                    relationsToJoin.push(queryEval(bodyPred, false));
                 }
                 while (relationsToJoin.size() > 1){
                     Relation leftRelation = relationsToJoin.front();
@@ -93,16 +93,17 @@ public:
                 newDatabase.addToDatabase(finalRelation);
 
                 if (newDatabase.getTuplesCount() > prevTupleSize){
-                    iter_count++;
                     tupleFound = true;
                 }
-
             }
+            iter_count++;
         }
 
         std::cout << "Rule Evaluation" << std::endl;
         std::cout << ruleEvalOutput.str() << std::endl;
-        std::cout << "Schemes populated after " << iter_count << " passes through the Rules." << std::endl;
+        std::cout << "Schemes populated after " << iter_count << " passes through the Rules.\n" << std::endl;
+        std::cout << "Query Evaluation" << std::endl;
+
 
     }
 
@@ -134,7 +135,7 @@ public:
     }
 
 
-    Relation queryEval(Predicate query){
+    Relation queryEval(Predicate query, bool outputNeeded){
         unordered_map<string, vector<int>> variableAndIndexes;
         vector<string> renamed_columns;
 
@@ -178,18 +179,20 @@ public:
         modifiedRelation = modifiedRelation.rename(Scheme(renamed_columns));
 
         //printing
-        /*string header;
-        header = query.toString() + "? ";
-        if (modifiedRelation.getTupleCount() == 0){
-            header += "No";
+        if (outputNeeded){
+            string header;
+            header = query.toString() + "? ";
+            if (modifiedRelation.getTupleCount() == 0){
+                header += "No";
+            }
+            else{
+                header += "Yes(" + std::to_string(modifiedRelation.getTupleCount()) + ")";
+            }
+            std::cout << header << std::endl;
+            if (!variableAndIndexes.empty()){
+                std::cout << modifiedRelation.toString();
+            }
         }
-        else{
-            header += "Yes(" + std::to_string(modifiedRelation.getTupleCount()) + ")";
-        }
-        std::cout << header << std::endl;
-        if (!variableAndIndexes.empty()){
-            std::cout << modifiedRelation.toString();
-        }*/
 
         return modifiedRelation;
     }
