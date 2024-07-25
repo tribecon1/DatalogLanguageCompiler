@@ -111,9 +111,11 @@ public:
 
 
 
-    static pair<bool,unordered_map<string, int>> joinable(const Scheme& leftScheme, const Scheme& rightScheme,
+    static pair<bool,set<int>> joinable(const Scheme& leftScheme, const Scheme& rightScheme,
                          const Tuple& leftTuple, const Tuple& rightTuple) {
-        unordered_map<string, int> sharedColumnsAndIndexes;
+        //unordered_map<string, int> sharedColumnsAndIndexes;
+        set<int> sharedColumnsAndIndexes;
+
 
         for (int leftIndex = 0; leftIndex < leftScheme.size(); leftIndex++) {
             const string& leftName = leftScheme.at(leftIndex);
@@ -126,7 +128,8 @@ public:
                         return {false, sharedColumnsAndIndexes};
                     }
                     else{
-                        sharedColumnsAndIndexes.insert({leftScheme.at(leftIndex), rightIndex});
+//                        sharedColumnsAndIndexes.insert({leftScheme.at(leftIndex), rightIndex});
+                        sharedColumnsAndIndexes.insert(rightIndex);
                     }
                 }
             }
@@ -144,15 +147,24 @@ public:
         return {leftScheme};
     }
 
-    Tuple tupleJoiner(const unordered_map<string, int>& sharedColumnsAndIndexes, Tuple leftTuple, Tuple rightTuple){
+    Tuple tupleJoiner(set<int> sharedIndexes, Tuple leftTuple, Tuple rightTuple){
         vector<string> newTupleVals = leftTuple.getValues();
-        vector<string> remainingUniqueVals = rightTuple.getValues();
-        for (const auto& colAndIndexes : sharedColumnsAndIndexes){ //for if they have multiple shared columns
-            remainingUniqueVals.erase(remainingUniqueVals.begin() + colAndIndexes.second);
+        vector<string> remainingUniqueVals;
+
+
+        for (int index = 0; index < rightTuple.getValues().size(); index++) { //for if they have multiple shared columns
+            auto indexNeeded = sharedIndexes.insert(index);
+            if (indexNeeded.second){
+                remainingUniqueVals.push_back(rightTuple.getValues().at(index));
+            }
         }
-        for (const string& remainingVal : remainingUniqueVals){
-            newTupleVals.push_back(remainingVal);
+
+        if (!remainingUniqueVals.empty()){
+            for (const string& remainingVal : remainingUniqueVals){
+                newTupleVals.push_back(remainingVal);
+            }
         }
+
         return Tuple(newTupleVals);
     }
 
