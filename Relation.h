@@ -149,7 +149,6 @@ public:
         vector<string> newTupleVals = leftTuple.getValues();
         vector<string> remainingUniqueVals;
 
-
         for (int index = 0; index < rightTuple.getValues().size(); index++) { //for if they have multiple shared columns
             auto indexNeeded = sharedIndexes.insert(index);
             if (indexNeeded.second){
