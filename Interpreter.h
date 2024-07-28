@@ -13,6 +13,7 @@ using std::queue;
 #include "Database.h"
 #include "Scheme.h"
 #include "Tuple.h"
+#include "Graph.h"
 
 
 class Interpreter{
@@ -53,6 +54,25 @@ public:
             newDatabase.addToDatabase(foundRelation);
         }
     }
+
+
+    static Graph makeGraph(const vector<Rule>& rules) {
+        stringstream out;
+
+
+        Graph graph(rules.size());
+        // add code to add edges to the graph for the rule dependencies
+
+
+        for (int ruleIndex = 0; ruleIndex < rules.size(); ruleIndex++){
+            out << "from rule R" << ruleIndex << ": " << rules.at(ruleIndex).toString()
+        }
+
+
+        return graph;
+    }
+
+
 
 
     void ruleEval(){
@@ -100,10 +120,10 @@ public:
         }
 
         //Project 4 (+ Project 3) Output Printing
-        std::cout << "Rule Evaluation" << std::endl;
+        /*std::cout << "Rule Evaluation" << std::endl;
         std::cout << ruleEvalOutput.str() << std::endl;
         std::cout << "Schemes populated after " << iter_count << " passes through the Rules.\n" << std::endl;
-        std::cout << "Query Evaluation" << std::endl;
+        std::cout << "Query Evaluation" << std::endl;*/
 
     }
 
@@ -179,7 +199,7 @@ public:
         modifiedRelation = modifiedRelation.rename(Scheme(renamed_columns));
 
         //printing
-        if (outputNeeded){
+        /*if (outputNeeded){
             string header;
             header = query.toString() + "? ";
             if (modifiedRelation.getTupleCount() == 0){
@@ -192,7 +212,7 @@ public:
             if (!variableAndIndexes.empty()){
                 std::cout << modifiedRelation.toString();
             }
-        }
+        }*/
 
         return modifiedRelation;
     }

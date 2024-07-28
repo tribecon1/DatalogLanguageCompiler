@@ -110,7 +110,7 @@ public:
         return headPredicate;
     }
 
-    [[nodiscard]] std::string toString(){
+    [[nodiscard]] std::string toString() const {
         stringstream ss;
         ss << headPredicate.toString() << " :- ";
         for (int index = 0; index < bodyPredicates.size()-1; index++){
