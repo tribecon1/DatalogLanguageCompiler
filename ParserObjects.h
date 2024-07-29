@@ -97,7 +97,7 @@ public:
     }
 
     void addPredicates(const std::vector<Predicate>& givenPredicates){
-        for (Predicate currPredicate : givenPredicates){
+        for (const Predicate& currPredicate : givenPredicates){
             bodyPredicates.push_back(currPredicate);
         }
     }
