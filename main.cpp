@@ -70,7 +70,9 @@ int main(int argc, char* argv[]) {
     }
 
     Graph graph = Interpreter::makeGraph(rules);
-    std::cout << graph.toString();
+    std::cout << graph.toString() << std::endl;
+    Graph reversedGraph = graph.createReverseDepGraph();
+    std::cout << reversedGraph.toString();
 
 
     return 0;

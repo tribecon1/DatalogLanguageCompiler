@@ -65,38 +65,38 @@ public:
 
         for (int ruleIndex = 0; ruleIndex < rules.size(); ruleIndex++){
             Rule currRule = rules.at(ruleIndex);
-            out << "from rule R" << ruleIndex << ": " << currRule.getHeadPredicate().getName() << "() :- ";
+            //out << "from rule R" << ruleIndex << ": " << currRule.getHeadPredicate().getName() << "() :- ";
             for (Predicate bodyPred : currRule.getBodyPredicates()){
-                out << bodyPred.getName() << "(),";
+                //out << bodyPred.getName() << "(),";
             }
             string temp = out.str();
             out.str("");
             out.clear();
             temp.pop_back();
-            out << temp << "\n";
+            //out << temp << "\n";
             for (Predicate bodyPred : currRule.getBodyPredicates()){
-                out << "from body predicate: " << bodyPred.getName() << "()\n";
+                //out << "from body predicate: " << bodyPred.getName() << "()\n";
                 for (int repeatIndex = 0; repeatIndex < rules.size(); repeatIndex++){
                     Rule repeatRule = rules.at(repeatIndex);
-                    out << "to rule R" << repeatIndex << ": " << repeatRule.getHeadPredicate().getName() << "() :- ";
+                    //out << "to rule R" << repeatIndex << ": " << repeatRule.getHeadPredicate().getName() << "() :- ";
                     for (Predicate repeatBodyPred : repeatRule.getBodyPredicates()){
-                        out << repeatBodyPred.getName() << "(),";
+                        //out << repeatBodyPred.getName() << "(),";
                     }
                     temp = out.str();
                     out.str("");
                     out.clear();
                     temp.pop_back();
-                    out << temp << "\n";
+                    //out << temp << "\n";
                     if (bodyPred.getName() == repeatRule.getHeadPredicate().getName()){
                         graph.addEdge(ruleIndex,repeatIndex);
-                        out << "dependency found: (" << "R"+std::to_string(ruleIndex) << "," << "R"+ std::to_string(repeatIndex) << ")\n";
+                        //out << "dependency found: (" << "R"+std::to_string(ruleIndex) << "," << "R"+ std::to_string(repeatIndex) << ")\n";
                     }
                 }
             }
 
         }
 
-        std::cout << out.str();
+        //std::cout << out.str();
 
         return graph;
     }

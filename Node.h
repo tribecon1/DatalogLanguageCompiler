@@ -11,14 +11,21 @@ using std::set;
 class Node {
 
 private:
-
     set<int> adjacentNodeIDs;
-    //bool visited;
+    bool visited = false;
 
 public:
 
     void addEdge(int adjacentNodeID) {
         adjacentNodeIDs.insert(adjacentNodeID);
+    }
+
+    void setAsVisited(){
+        visited = true;
+    }
+
+    set<int> showOutwardAdjacentNodes(){
+        return adjacentNodeIDs;
     }
 
 
@@ -28,12 +35,10 @@ public:
         for (int nodeRef : adjacentNodeIDs){
             out << "R" << nodeRef << ",";
         }
-
         string output = out.str();
         if (!output.empty()){
             output.pop_back();
         }
-
         return output;
     }
 
