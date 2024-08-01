@@ -11,6 +11,11 @@ using std::vector;
 #include "Node.h"
 #include "Graph.h"
 
+//std::stack<int> Interpreter::postOrder;
+//std::vector<int> Interpreter::nodesVisitedForSCC;
+
+
+
 int main(int argc, char* argv[]) {
     string filename = argv[1];
     ifstream in_reader;
@@ -69,10 +74,21 @@ int main(int argc, char* argv[]) {
         rules.push_back(rule);
     }
 
-    Graph graph = Interpreter::makeGraph(rules);
-    std::cout << graph.toString() << std::endl;
-    Graph reversedGraph = graph.createReverseDepGraph();
-    std::cout << reversedGraph.toString();
+
+//    Graph graph = Interpreter::makeGraph(rules);
+//    std::cout << graph.toString() << std::endl;
+//    Graph reversedGraph = graph.createReverseDepGraph();
+//    std::cout << reversedGraph.toString();
+//    Interpreter::dfsForest(reversedGraph);
+//    std::cout << "\nPostOrder Stack Order:" << std::endl;
+//    stack<int> toPrintPostOrder = Interpreter::postOrder;
+//    while (!toPrintPostOrder.empty()){
+//        std::cout << "R" << toPrintPostOrder.top() << std::endl;
+//        toPrintPostOrder.pop();
+//    }
+//    vector<vector<int>> sccs = Interpreter::findSCC(graph);
+//    std::cout << "\nSCCs Found: " << sccs.size() << std::endl;
+
 
 
     return 0;

@@ -1,30 +1,18 @@
-
-
-# forward rule order
-
-
 Schemes:
-
-  a(x)
-  b(y)
-  c(z)
-  d(w)
+Parent(p,c)
+Sibling(a,b)
+Ancestor(x,y)
 
 Facts:
-
-  a('1').
-  a('2').
-  a('4').
+Parent('bob','ned').
+Parent('jim','bob').
+Sibling('sue','ned').
 
 Rules:
-
-  b(y) :- a(y).
-  c(z) :- b(z).
-  d(w) :- c(w).
+Sibling(x,y):-Sibling(y,x).
+Ancestor(x,y):-Ancestor(x,z),Parent(z,y).
+Ancestor(x,y):-Parent(x,y).
 
 Queries:
-
-  a(x)?
-  b(y)?
-  c(z)?
-  d(z)?
+Ancestor(x,'ned')?
+Sibling('ned','sue')?

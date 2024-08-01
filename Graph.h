@@ -15,12 +15,23 @@ private:
 public:
 
     explicit Graph(int size) {
-        for (int nodeID = 0; nodeID < size; nodeID++)
-            nodes[nodeID] = Node();
+        for (int nodeID = 0; nodeID < size; nodeID++){
+            nodes[nodeID] = Node(nodeID);
+        }
     }
 
     void addEdge(int fromNodeID, int toNodeID) {
         nodes[fromNodeID].addEdge(toNodeID);
+    }
+
+    map<int,Node>& getNodesAndDependencies(){
+        return nodes;
+    }
+
+    void setNodesToUnvisited(){
+        for (auto pair : nodes){
+            pair.second.clearVisit();
+        }
     }
 
 
