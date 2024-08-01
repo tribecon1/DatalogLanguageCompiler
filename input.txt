@@ -1,55 +1,38 @@
-# joins: join with self
+
+# input103
+# requires 5 passes through the rules
+# produces all 256 combinations of the letters 'abcd'
+# join must be able to join relations with multiple common names
 
 
 Schemes:
 
-  a(x,y)
-  b(x,y,z)
-  c(x,y,z,w)
-  d(x,y,z,w,v)
-
-  e(x,y)
-  f(x,y,z)
-  g(x,y,z,w)
-  h(x,y,z,w,v)
+combinations(a,b,c,d)
+be(b,e)
+ce(c,e)
+bcd(b,c,d)
+ade(a,d,e)
+chars(all)
+shift(a,b,c,d)
 
 Facts:
 
-  a('1','4').
-  a('2','4').
-  a('2','5').
-
-  b('5','4','7').
-  b('5','4','8').
-  b('6','4','8').
-
-  c('1','2','3','4').
-  c('3','2','4','1').
-  c('2','2','4','4').
-  c('2','2','4','4').
-  c('4','2','3','2').
-
-  d('1','2','3','4','5').
-  d('5','2','2','4','2').
-  d('3','4','3','4','3').
-  d('2','1','2','1','2').
-  d('2','1','2','1','2').
+shift('a','b','c','d').
 
 Rules:
 
-  e(x,y) :- a(x,y), a(x,y), a(x,y), a(x,y), a(x,y).
-  f(x,y,z) :- b(x,y,z), b(x,y,z), b(x,y,z), b(x,y,z).
-  g(x,y,z,w) :- c(x,y,z,w), c(x,y,z,w), c(x,y,z,w).
-  h(x,y,z,w,v) :- d(x,y,z,w,v), d(x,y,z,w,v).
+chars(a) :- shift(a,b,c,d).
+be(b,e) :- chars(b), chars(e).
+ce(c,e) :- chars(c), chars(e).
+bcd(b,c,d) :- chars(b), chars(c), chars(d).
+ade(a,d,e) :- chars(a), chars(d), chars(e).
+combinations(a,b,c,d) :- be(b,d), ce(c,d), bcd(b,c,d), ade(a,b,c).
+shift(a,b,c,d) :- shift(d,a,b,c).
 
 Queries:
 
-  a(x,y)?
-  b(x,y,z)?
-  c(x,y,z,w)?
-  d(x,y,z,w,v)?
-
-  e(x,y)?
-  f(x,y,z)?
-  g(x,y,z,w)?
-  h(x,y,z,w,v)?
+shift(a,b,c,d)?
+chars(a)?
+be(b,e)?
+ade(a,d,e)?
+combinations(a,b,c,d)?

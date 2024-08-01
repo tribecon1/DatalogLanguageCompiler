@@ -147,7 +147,7 @@ public:
         while (!postOrder.empty()){
             dfs(originalDependencyGraph.getNodesAndDependencies()[postOrder.top()], originalDependencyGraph, false);
             postOrder.pop();
-            std::cout << "Nodes per SCC = " << nodesVisitedForSCC.size() << std::endl;
+            //std::cout << "Nodes per SCC = " << nodesVisitedForSCC.size() << std::endl;
             if (!nodesVisitedForSCC.empty()){
                 sccFound.push_back(nodesVisitedForSCC);
             }
@@ -225,15 +225,38 @@ public:
         dfsForest(reversedDependencyGraph);
         vector<vector<int>> allSCCs = findSCC(dependencyGraph);
 
-        bool tupleFound = true;
-        unsigned iter_count = 0;
 
         for (const vector<int>& ind_scc : allSCCs){
+            unsigned iter_count = 0;
+            bool tupleFound = true;
+
+
+            ruleEvalOutput << "SCC: ";
+            for (int i = 0; i < ind_scc.size(); i++){
+                ruleEvalOutput << "R" << ind_scc.at(i);
+                if (i != ind_scc.size()-1){
+                    ruleEvalOutput << ",";
+                }
+                ruleEvalOutput << "\n";
+            }
+
             while (tupleFound){
+                iter_count++;
                 tupleFound = false;
+
                 for (int ruleIndex : ind_scc){
                     Rule rule = givenDatalog.getRules().at(ruleIndex);
+
+                    set<int> dependentNodes = dependencyGraph.getNodesAndDependencies()[ruleIndex].showOutwardAdjacentNodes();
+                    auto iter = dependentNodes.find(ruleIndex);
+                    bool selfDependent = false;
+                    if (iter != dependentNodes.end()){
+                        selfDependent = true;
+                    }
                     ruleEvalOutput << rule.toString() << "\n";
+
+
+
 
                     for (const Predicate& bodyPred : rule.getBodyPredicates()){
                         relationsToJoin.push(queryEval(bodyPred, false));
@@ -260,20 +283,32 @@ public:
                     newDatabase.addToDatabase(finalRelation);
 
                     if (newDatabase.getTuplesCount() > prevTupleSize){
-                        tupleFound = true;
+                        if (ind_scc.size() == 1 && !selfDependent){
+                            tupleFound = false;
+                        }
+                        else{
+                            tupleFound = true;
+                        }
                     }
                 }
-                iter_count++;
+
+            }
+            ruleEvalOutput << iter_count << " passes: ";
+            for (int i = 0; i < ind_scc.size(); i++){
+                ruleEvalOutput << "R" << ind_scc.at(i);
+                if (i != ind_scc.size()-1){
+                    ruleEvalOutput << ",";
+                }
+                ruleEvalOutput << "\n";
             }
         }
 
 
 
-        //Project 4 (+ Project 3) Output Printing
-        /*std::cout << "Rule Evaluation" << std::endl;
+        //Project 5 Output Printing
+        std::cout << "Rule Evaluation" << std::endl;
         std::cout << ruleEvalOutput.str() << std::endl;
-        std::cout << "Schemes populated after " << iter_count << " passes through the Rules.\n" << std::endl;
-        std::cout << "Query Evaluation" << std::endl;*/
+        std::cout << "Query Evaluation" << std::endl;
 
     }
 
@@ -349,7 +384,7 @@ public:
         modifiedRelation = modifiedRelation.rename(Scheme(renamed_columns));
 
         //printing
-        /*if (outputNeeded){
+        if (outputNeeded){
             string header;
             header = query.toString() + "? ";
             if (modifiedRelation.getTupleCount() == 0){
@@ -362,7 +397,7 @@ public:
             if (!variableAndIndexes.empty()){
                 std::cout << modifiedRelation.toString();
             }
-        }*/
+        }
 
         return modifiedRelation;
     }
