@@ -24,22 +24,16 @@ private:
     Datalog givenDatalog;
     Database newDatabase;
     stack<int> postOrder;
-    vector<int> nodesVisitedForSCC;
+    set<int> nodesVisitedForSCC;
 
 public:
     Interpreter(Datalog givenDatalog, Database emptyDatabase) : givenDatalog(std::move(givenDatalog)), newDatabase(std::move(emptyDatabase)) {}
-
-
-    //static stack<int> postOrder;
-    //static vector<int> nodesVisitedForSCC;
-
 
 
     [[nodiscard]] Database interpret(){
 
         schemeEval();
         factEval();
-        //ruleEval();
         efficientRuleEval();
         for (const Predicate& query : givenDatalog.getQueries()){
             queryEval(query, true);
@@ -69,43 +63,22 @@ public:
         stringstream out;
 
         Graph graph(rules.size());
-        // add code to add edges to the graph for the rule dependencies
-
 
         for (int ruleIndex = 0; ruleIndex < rules.size(); ruleIndex++){
             Rule currRule = rules.at(ruleIndex);
-            //out << "from rule R" << ruleIndex << ": " << currRule.getHeadPredicate().getName() << "() :- ";
             for (Predicate bodyPred : currRule.getBodyPredicates()){
-                //out << bodyPred.getName() << "(),";
             }
-            string temp = out.str();
-            out.str("");
-            out.clear();
-            temp.pop_back();
-            //out << temp << "\n";
             for (Predicate bodyPred : currRule.getBodyPredicates()){
-                //out << "from body predicate: " << bodyPred.getName() << "()\n";
                 for (int repeatIndex = 0; repeatIndex < rules.size(); repeatIndex++){
                     Rule repeatRule = rules.at(repeatIndex);
-                    //out << "to rule R" << repeatIndex << ": " << repeatRule.getHeadPredicate().getName() << "() :- ";
                     for (Predicate repeatBodyPred : repeatRule.getBodyPredicates()){
-                        //out << repeatBodyPred.getName() << "(),";
                     }
-                    temp = out.str();
-                    out.str("");
-                    out.clear();
-                    temp.pop_back();
-                    //out << temp << "\n";
                     if (bodyPred.getName() == repeatRule.getHeadPredicate().getName()){
                         graph.addEdge(ruleIndex,repeatIndex);
-                        //out << "dependency found: (" << "R"+std::to_string(ruleIndex) << "," << "R"+ std::to_string(repeatIndex) << ")\n";
                     }
                 }
             }
-
         }
-
-        //std::cout << out.str();
         return graph;
     }
 
@@ -125,7 +98,7 @@ public:
         }
         else{
             if (!givenNode.isVisited()){
-                nodesVisitedForSCC.push_back(givenNode.getNodeID());
+                nodesVisitedForSCC.insert(givenNode.getNodeID());
             }
         }
     }
@@ -141,13 +114,13 @@ public:
         }
     }
 
-    vector<vector<int>> findSCC(Graph originalDependencyGraph){
-        vector<vector<int>> sccFound;
+    vector<set<int>> findSCC(Graph originalDependencyGraph){
+        vector<set<int>> sccFound;
+
 
         while (!postOrder.empty()){
             dfs(originalDependencyGraph.getNodesAndDependencies()[postOrder.top()], originalDependencyGraph, false);
             postOrder.pop();
-            //std::cout << "Nodes per SCC = " << nodesVisitedForSCC.size() << std::endl;
             if (!nodesVisitedForSCC.empty()){
                 sccFound.push_back(nodesVisitedForSCC);
             }
@@ -160,60 +133,6 @@ public:
     }
 
 
-
-
-    /*void ruleEval(){
-        queue<Relation> relationsToJoin;
-
-        stringstream ruleEvalOutput;
-
-        bool tupleFound = true;
-        unsigned iter_count = 0;
-        while (tupleFound){
-            tupleFound = false;
-            for (Rule rule : givenDatalog.getRules()){
-
-                ruleEvalOutput << rule.toString() << "\n";
-
-                for (const Predicate& bodyPred : rule.getBodyPredicates()){
-                    relationsToJoin.push(queryEval(bodyPred, false));
-                }
-                while (relationsToJoin.size() > 1){
-                    Relation leftRelation = relationsToJoin.front();
-                    relationsToJoin.pop();
-                    Relation rightRelation = relationsToJoin.front();
-                    relationsToJoin.pop();
-                    Relation joinedRelation = leftRelation.join(rightRelation);
-                    relationsToJoin.push(joinedRelation);
-                }
-                Relation finalJoinedRelation = relationsToJoin.front();
-                relationsToJoin.pop();
-
-                vector<int> columnsToProject = columnIndexConverter(rule.getHeadPredicate().getParameters(), finalJoinedRelation.getScheme());
-                finalJoinedRelation = finalJoinedRelation.project(columnsToProject);
-
-                Relation finalRelation = newDatabase.locateRelation(rule.getHeadPredicate().getName());
-                unsigned prevTupleSize = newDatabase.getTuplesCount();
-                finalJoinedRelation = finalJoinedRelation.rename(finalRelation.getScheme());
-
-                finalRelation = finalRelation.relationUnion(finalJoinedRelation, ruleEvalOutput);
-                newDatabase.addToDatabase(finalRelation);
-
-                if (newDatabase.getTuplesCount() > prevTupleSize){
-                    tupleFound = true;
-                }
-            }
-            iter_count++;
-        }
-
-        //Project 4 (+ Project 3) Output Printing
-        //std::cout << "Rule Evaluation" << std::endl;
-        //std::cout << ruleEvalOutput.str() << std::endl;
-        //std::cout << "Schemes populated after " << iter_count << " passes through the Rules.\n" << std::endl;
-        //std::cout << "Query Evaluation" << std::endl;
-
-    }*/
-
     void efficientRuleEval(){
         queue<Relation> relationsToJoin;
 
@@ -223,22 +142,25 @@ public:
         std::cout << "Dependency Graph\n"<< dependencyGraph.toString() << std::endl;
         Graph reversedDependencyGraph = dependencyGraph.createReverseDepGraph();
         dfsForest(reversedDependencyGraph);
-        vector<vector<int>> allSCCs = findSCC(dependencyGraph);
+        vector<set<int>> allSCCs = findSCC(dependencyGraph);
 
 
-        for (const vector<int>& ind_scc : allSCCs){
+        for (const set<int>& ind_scc : allSCCs){
             unsigned iter_count = 0;
             bool tupleFound = true;
 
 
             ruleEvalOutput << "SCC: ";
-            for (int i = 0; i < ind_scc.size(); i++){
-                ruleEvalOutput << "R" << ind_scc.at(i);
-                if (i != ind_scc.size()-1){
+            int setPrinter = 0;
+            for (int ruleIndex : ind_scc){
+                setPrinter++;
+                ruleEvalOutput << "R" << ruleIndex;
+                if (setPrinter != ind_scc.size()){
                     ruleEvalOutput << ",";
                 }
-                ruleEvalOutput << "\n";
             }
+            ruleEvalOutput << "\n";
+
 
             while (tupleFound){
                 iter_count++;
@@ -254,9 +176,6 @@ public:
                         selfDependent = true;
                     }
                     ruleEvalOutput << rule.toString() << "\n";
-
-
-
 
                     for (const Predicate& bodyPred : rule.getBodyPredicates()){
                         relationsToJoin.push(queryEval(bodyPred, false));
@@ -294,22 +213,21 @@ public:
 
             }
             ruleEvalOutput << iter_count << " passes: ";
-            for (int i = 0; i < ind_scc.size(); i++){
-                ruleEvalOutput << "R" << ind_scc.at(i);
-                if (i != ind_scc.size()-1){
+            setPrinter = 0;
+            for (int ruleIndex : ind_scc){
+                setPrinter++;
+                ruleEvalOutput << "R" << ruleIndex;
+                if (setPrinter != ind_scc.size()){
                     ruleEvalOutput << ",";
                 }
-                ruleEvalOutput << "\n";
             }
+            ruleEvalOutput << "\n";
         }
-
-
 
         //Project 5 Output Printing
         std::cout << "Rule Evaluation" << std::endl;
         std::cout << ruleEvalOutput.str() << std::endl;
         std::cout << "Query Evaluation" << std::endl;
-
     }
 
 

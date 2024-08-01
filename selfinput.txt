@@ -1,18 +1,22 @@
+
+# dependency cycle with two rules
+
 Schemes:
-Parent(p,c)
-Sibling(a,b)
-Ancestor(x,y)
+
+  a(x)
+  b(y)
 
 Facts:
-Parent('bob','ned').
-Parent('jim','bob').
-Sibling('sue','ned').
+
+  a('1').
+  b('2').
 
 Rules:
-Sibling(x,y):-Sibling(y,x).
-Ancestor(x,y):-Ancestor(x,z),Parent(z,y).
-Ancestor(x,y):-Parent(x,y).
+
+  a(x) :- b(x).
+  b(y) :- a(y).
 
 Queries:
-Ancestor(x,'ned')?
-Sibling('ned','sue')?
+
+  a(x)?
+  b(y)?
